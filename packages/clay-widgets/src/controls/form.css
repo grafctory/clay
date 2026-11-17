@@ -1,0 +1,50 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A form draws nothing of its own: it stands in the flow as the block its fields are laid out in.
+ */
+
+clay-form {
+
+    display: block;
+
+    /*
+     * A growing form takes the room a column leaves, shared with whatever else the column holds. A container laying
+     * its content out as a page does shares no room, so a form standing alone in one fills its height instead, which
+     * the container makes definite where it is meant to be filled, as the main body of a tool does. The element and
+     * the native form inside it both lay the fields out as a column, so a growing field or stack takes the room next.
+     */
+
+    &[grow] {
+
+        display: flex;
+        flex-direction: column;
+        flex: auto;
+
+        &:only-child {
+            min-block-size: 100%;
+        }
+
+        & > form {
+            display: flex;
+            flex-direction: column;
+            flex: auto;
+        }
+
+    }
+
+}

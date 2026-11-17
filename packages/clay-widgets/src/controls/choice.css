@@ -1,0 +1,288 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A choice is drawn as a track holding a thumb. The track is one box in the field border, sunk into the page, with
+ * the corners and the height of a select, so it sits in a row of buttons and selects as one of them. The chosen
+ * option is the thumb, raised out of the track as a card of its own and told apart from it by surface and edge
+ * rather than by hue, so the choice reads in greyscale as it does in colour. The radio buttons carrying the choice
+ * stay in the document, out of view, so the platform keeps their keys and focus.
+ */
+
+/* The look of a choice stating none, which an area assigns to every choice it holds. */
+
+@property --clay-choice-look {
+    syntax: "subtle | normal | strong";
+    inherits: true;
+    initial-value: normal;
+}
+
+clay-choice {
+
+    display: inline-block;
+    vertical-align: middle;
+
+    /* The segments share the width of the widest one, so no option reads as weightier than another. */
+
+    & > fieldset {
+
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 1fr;
+
+        margin: 0;
+        padding: 0;
+
+        border-style: var(--skin--border-style);
+        border-color: var(--skin--border-color-field);
+        border-radius: var(--skin--border-radius-025);
+        background-color: var(--skin--background-color-sunken);
+
+        /*
+         * An option is a control rather than text, so a press or a drag across the row chooses rather than selects
+         * its label, as with a button.
+         */
+
+        & > label {
+
+            /*
+             * An option is a segment of the track rather than a name beside its box, so it drops the row and the strong
+             * weight the design system sets a label wrapping a radio button in, and its segment fills the column.
+             */
+
+            display: block;
+            position: relative;
+            font-weight: var(--skin--font-weight);
+            cursor: pointer;
+            user-select: none;
+
+            /* The reset hands every box the colour of the one around it, so labels are left unpainted. */
+
+            background-color: transparent;
+
+            & > input {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /*
+             * A segment takes the room and the corners of a select, so the track stands exactly as tall as a select
+             * beside it, and more inline room, so the thumb stands clear of its label.
+             *
+             * A glyph sits on the baseline of its line and rides high in the segment, so what a segment carries is
+             * centred instead. The segment is floored at the height of a line of text, so a choice of glyphs stands
+             * as tall as a choice of labels, and the two line up when set side by side in a row of controls.
+             *
+             * Every segment keeps an edge, transparent unless chosen, so moving the choice never shifts the row, and
+             * is pulled out over the border of the track by the width of one, so the edge of the thumb merges into
+             * the border of the track along its stretch rather than doubling it.
+             */
+
+            & > span {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: calc(1lh + 2 * (var(--skin--spacing-025) + var(--skin--border-width)));
+                margin: calc(-1 * var(--skin--border-width));
+                padding: var(--skin--spacing-025) var(--skin--spacing-075);
+                border: var(--skin--border-width) var(--skin--border-style) transparent;
+                border-radius: var(--skin--border-radius-025);
+                background-color: transparent;
+                color: var(--skin--color-label);
+                white-space: nowrap;
+                transition-property: color, border-color, background-color;
+                transition-duration: var(--skin--duration-fast);
+                transition-timing-function: var(--skin--easing-standard);
+            }
+
+            /*
+             * An option on offer answers the pointer and the press with the neutral cover a button carrying no
+             * meaning takes, deepening the track by the same step it deepens any surface.
+             */
+
+            &:hover > input:not(:checked) + span {
+                background-color: var(--skin--background-color-hover-neutral);
+                color: var(--skin--color);
+            }
+
+            &:active > input:not(:checked) + span {
+                background-color: var(--skin--background-color-pressed-neutral);
+            }
+
+            /*
+             * The chosen segment is the thumb, raised out of the track on the raised surface and edged in the field
+             * border it merges into. Its label takes the text colour where the others recede into the label colour,
+             * and the checked state tells assistive technology which option is chosen.
+             */
+
+            & > input:checked + span {
+                border-color: var(--skin--border-color-field);
+                background-color: var(--skin--background-color-raised);
+                color: var(--skin--color);
+            }
+
+            /*
+             * The ring marks the segment the keyboard stands on, which the radio button kept out of view cannot draw
+             * for itself, just inside the segment, as the design system draws it inside a boxed control.
+             */
+
+            & > input:focus-visible + span {
+                outline: var(--skin--outline-focus);
+                outline-offset: calc(-2 * var(--skin--border-width));
+            }
+
+        }
+
+    }
+
+    /*
+     * The quiet step drops the track and the thumb and sets the options one line tall, so they read as part of the
+     * text around them and never stand taller than their line. Each option is as wide as what it carries rather than
+     * as the widest. The chosen one is inked in the selection accent and underlined by a bar spanning its label or
+     * glyph, so the mark survives where the accent alone would not tell it from its neighbours. The bar stands just
+     * clear of its word, heavy enough to read as a mark, and takes no room, so moving the choice never shifts the line.
+     *
+     * The strong step sets the options in the strong weight and inks the label on the thumb in the selection accent,
+     * so the choice stands out from the quieter fields and selects around it. A glyph carries no weight of its own,
+     * so its stroke is drawn at the strong width to keep it on the footing of a bold label.
+     */
+
+    &[look="subtle"] > fieldset {
+
+        display: flex;
+        column-gap: var(--skin--spacing-050);
+        padding: 0;
+        border-style: none;
+        background-color: transparent;
+
+        & > label {
+
+            & > span {
+                min-height: 1lh;
+                margin: 0;
+                padding: 0;
+                border-style: none;
+                border-radius: 0;
+            }
+
+            &:is(:hover, :active) > input:not(:checked) + span {
+                background-color: transparent;
+                color: var(--skin--color-hover);
+            }
+
+            & > input:checked + span {
+
+                background-color: transparent;
+                color: var(--skin--color-selected);
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    inset-inline: 0;
+                    top: calc(100% + var(--skin--spacing-010));
+                    height: calc(2 * var(--skin--border-width));
+                    background-color: currentColor;
+                }
+
+            }
+
+        }
+
+    }
+
+    &[look="strong"] > fieldset > label {
+
+        font-weight: var(--skin--font-weight-strong);
+
+        & .lucide {
+            stroke-width: var(--skin--stroke-width-strong);
+        }
+
+        & > input:checked + span {
+            color: var(--skin--color-selected);
+        }
+
+    }
+
+    /*
+     * A choice stating no look of its own takes the one the area around it sets, read off the `--clay-choice-look`
+     * knob through a style query, restating the declarations of the attribute rules above: a style query is a
+     * conditional group taking rules of its own, so the two forms of the same step cannot be written as one selector.
+     */
+
+    @container style(--clay-choice-look: subtle) {
+        &:not([look]) > fieldset {
+
+            display: flex;
+            column-gap: var(--skin--spacing-050);
+            padding: 0;
+            border-style: none;
+            background-color: transparent;
+
+            & > label {
+
+                & > span {
+                    min-height: 1lh;
+                    margin: 0;
+                    padding: 0;
+                    border-style: none;
+                    border-radius: 0;
+                }
+
+                &:is(:hover, :active) > input:not(:checked) + span {
+                    background-color: transparent;
+                    color: var(--skin--color-hover);
+                }
+
+                & > input:checked + span {
+
+                    background-color: transparent;
+                    color: var(--skin--color-selected);
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        inset-inline: 0;
+                        top: calc(100% + var(--skin--spacing-010));
+                        height: calc(2 * var(--skin--border-width));
+                        background-color: currentColor;
+                    }
+
+                }
+
+            }
+
+        }
+    }
+
+    @container style(--clay-choice-look: strong) {
+        &:not([look]) > fieldset > label {
+
+            font-weight: var(--skin--font-weight-strong);
+
+            & .lucide {
+                stroke-width: var(--skin--stroke-width-strong);
+            }
+
+            & > input:checked + span {
+                color: var(--skin--color-selected);
+            }
+
+        }
+    }
+
+}

@@ -1,0 +1,166 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A card lays its parts out as a two-column grid: the title over the description in a main column, the badge over the
+ * image in a side column kept to the end of the card, as wide as what it holds up to the cap set below.
+ */
+
+/*
+ * The widest the side column grows: capped on a wide card and a share of a narrow one, the share taken of the card
+ * where the knob is read, so the main column keeps the larger part of the card at any width. Past it, a badge is
+ * clipped and a picture is scaled down. A single dash keeps this layout knob apart from the `--skin--` contract.
+ */
+
+@property --clay-card-side-max-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: min(15rem, 33%);
+}
+
+clay-card {
+
+    display: grid;
+    grid-template-columns: 1fr fit-content(var(--clay-card-side-max-width));
+    grid-template-rows: min-content min-content;
+    align-items: start;
+    gap: var(--skin--spacing-025) var(--skin--spacing-100);
+
+    /* Consecutive cards are set apart, so a run of them reads as a list of entries. */
+
+    & + & {
+        margin-top: var(--skin--spacing-100);
+    }
+
+    /*
+     * A card given a look stands on a surface of its own. The page colour is retuned to the surface rather than
+     * painted over it, so everything inside reads as standing on the card. A card stating no look draws nothing,
+     * whatever the look of the area around it, so one surface never outlines every card nested inside it. A
+     * strong look takes the raised colour edged by a border rather than a shadow, so it stands apart with no depth.
+     */
+
+    &[look] {
+        padding: var(--skin--spacing-100);
+        border-radius: var(--skin--border-radius-050);
+        background-color: var(--skin--background-color);
+    }
+
+    &[look="subtle"] {
+        --skin--background-color: var(--skin--background-color-sunken);
+    }
+
+    &[look="strong"] {
+        --skin--background-color: var(--skin--background-color-raised);
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+    }
+
+    /* The title and the badge share the first row, sitting on a common baseline as an infobox entry does. */
+
+    & > span {
+
+        grid-row: 1;
+        align-self: baseline;
+
+        /* The title names the resource the card sums up, so it reads at the strong weight whatever it holds. */
+
+        &:not(.badge) {
+            grid-column: 1;
+            justify-self: stretch;
+            font-weight: var(--skin--font-weight-strong);
+        }
+
+    }
+
+    & > div {
+
+        grid-row: 2;
+        grid-column: 1;
+        justify-self: stretch;
+
+        /* A description with no image beneath the side column runs on under the badge. */
+
+        &:last-child {
+            grid-column: 1 / -1;
+        }
+
+    }
+
+    /*
+     * A badge is guidance rather than text, rendered as a label of an infobox is: it takes the size and weight
+     * of the title beside it, set apart by the label colour alone, which holds 4.5:1 in both schemes, and is kept to
+     * one line, clipped with an ellipsis where it outruns the side column rather than wrapping the row.
+     */
+
+    & > .badge {
+
+        /* Held to the column, or the line keeps its full width and spills over the title rather than clipping. */
+
+        max-width: 100%;
+        grid-column: 2;
+        justify-self: end;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: end;
+        color: var(--skin--color-label);
+
+    }
+
+    /*
+     * An image given as initials or an icon rather than a picture is set in the label colour, as the badge is, and a
+     * caption under a picture is aligned with its end edge, as the badge above it is aligned with the card end.
+     */
+
+    & > i {
+
+        /* The image may shrink below its own width, so a picture wider than the cap leaves the column as capped. */
+
+        min-width: 0;
+        grid-row: 2;
+        grid-column: 2;
+        justify-self: end;
+        text-align: end;
+        font-style: normal;
+        color: var(--skin--color-label);
+
+    }
+
+    /*
+     * A card given a number of lines cuts its description short with an ellipsis past them, and holds the image beside
+     * it to their height: a picture inside the border it draws, an empty state's glyph inside its padding and border.
+     */
+
+    &[lines] {
+
+        & > div {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: var(--clay-card-lines);
+            line-clamp: var(--clay-card-lines);
+            overflow: hidden;
+        }
+
+        & > i {
+            --clay-image-max-height: calc(var(--clay-card-lines) * 1lh - 2 * var(--skin--border-width));
+            --clay-empty-icon-size: calc(
+                var(--clay-card-lines) * 1lh - 2 * (var(--skin--spacing-100) + var(--skin--border-width))
+            );
+            align-self: stretch;
+        }
+
+    }
+
+}

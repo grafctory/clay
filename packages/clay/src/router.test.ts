@@ -1,0 +1,1941 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { type ComponentChildren, createElement, type FunctionComponent, type JSX, render, type VNode } from "preact";
+import { useEffect } from "preact/hooks";
+import { act } from "preact/test-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { app } from "./index.js";
+import { Router, Routes, useAnnex, useRoute, useRouter, useTitle } from "./router.js";
+
+
+beforeAll(async () => {
+	document.title = "App";
+	expect(app.name).toBe("App"); // the app name, settled on first access
+});
+
+
+type Routing = Parameters<typeof Routes>[0]["children"];
+
+
+const Here: FunctionComponent = () => createElement("output", {}, useRoute());
+const Annex: FunctionComponent = () => createElement("output", {}, useAnnex());
+
+
+function shell(children: ComponentChildren): void {
+	act(() => render(createElement(Router, { children }), document.body));
+}
+
+function mount(routes: Routing): void {
+	shell(createElement(Routes, { children: routes }));
+}
+
+function section(routes: Routing): FunctionComponent {
+	return () => createElement(Routes, { children: routes });
+}
+
+function text(): string {
+	return document.body.textContent ?? "";
+}
+
+
+beforeEach(async () => {
+	history.replaceState(null, "", "/");
+	document.title = "";
+});
+
+afterEach(async () => {
+	act(() => render(null, document.body));
+});
+
+
+describe("Router", () => {
+
+	describe("children", () => {
+
+		it("should render its children as they are", async () => {
+
+			shell(createElement("p", {}, "content"));
+
+			expect(text()).toBe("content");
+
+		});
+
+		it("should provide the current route to its children", async () => {
+
+			history.replaceState(null, "", "/current");
+
+			shell(createElement(Here, {}));
+
+			expect(text()).toBe("/current");
+
+		});
+
+		it("should accept any route", async () => {
+
+			history.replaceState(null, "", "/unhandled");
+
+			expect(() => shell(createElement("p", {}))).not.toThrow();
+
+		});
+
+	});
+
+	describe("scrolling", () => {
+
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+
+		it("should bring the page to the top when following a link", async () => {
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement("p", {}, "other")
+			});
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(scroll).toHaveBeenCalledWith(0, 0);
+
+		});
+
+		describe("boxes", () => {
+
+			const routes: Routing = {
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement("p", {}, "other")
+			};
+
+			function frame(): void {
+				shell([
+					createElement("aside", {}, "side"),
+					createElement("main", {}, createElement("div", {}, createElement(Routes, { children: routes })))
+				]);
+			}
+
+			function scroll(selector: string): Element | null {
+
+				const box = document.querySelector(selector);
+
+				box?.scrollTo(30, 120);
+
+				return box;
+
+			}
+
+			function offsets(box: Element | null): readonly [number, number] | undefined {
+				return box ? [box.scrollLeft, box.scrollTop] : undefined;
+			}
+
+
+			it("should bring the main landmark to its top when following a link", async () => {
+
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				frame();
+
+				const main = scroll("main");
+
+				await act(async () => document.querySelector("a")?.click());
+
+				expect(offsets(main)).toEqual([0, 0]);
+
+			});
+
+			it("should bring every box scrolling inside the main landmark to its top when following a link", async () => {
+
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				frame();
+
+				const body = scroll("main > div");
+
+				await act(async () => document.querySelector("a")?.click());
+
+				expect(offsets(body)).toEqual([0, 0]);
+
+			});
+
+			it("should leave boxes scrolling outside the main landmark in place when following a link", async () => {
+
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				frame();
+
+				const side = scroll("aside");
+
+				await act(async () => document.querySelector("a")?.click());
+
+				expect(offsets(side)).toEqual([30, 120]);
+
+			});
+
+		});
+
+		it("should bring the page to the top when following a link to the current route", async () => {
+
+			history.replaceState(null, "", "/#part");
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/": createElement("a", { href: "/" }, "home") });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.hash).toBe("");
+			expect(scroll).toHaveBeenCalledWith(0, 0);
+
+		});
+
+		it("should bring the element the fragment names into view when following a link", async () => {
+
+			vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			const reveal = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+			mount({
+				"/": createElement("a", { href: "/other#part" }, "link"),
+				"/other": createElement("section", {}, createElement("h2", { id: "part" }, "part"))
+			});
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(reveal.mock.contexts.map(element => element instanceof Element ? element.id : undefined)).toEqual(["part"]);
+
+		});
+
+		it("should bring the element the fragment names into view when loaded on a fragment", async () => {
+
+			history.replaceState(null, "", "/other#part");
+
+			const reveal = vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => {});
+
+			mount({ "/other": createElement("section", {}, createElement("h2", { id: "part" }, "part")) });
+
+			expect(reveal.mock.contexts.map(element => element instanceof Element ? element.id : undefined)).toEqual(["part"]);
+
+		});
+
+		it("should leave the scroll position alone on a link changing the query alone", async () => {
+
+			history.replaceState(null, "", "/items?sort=name");
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/items": createElement("a", { href: "/items?sort=date" }, "by date") });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.search).toBe("?sort=date");
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the scroll position alone on a link changing the annex alone", async () => {
+
+			history.replaceState(null, "", "/items");
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/items": createElement("a", { href: "/items;table" }, "table") });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/items;table");
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the scroll position alone on browser history navigation", async () => {
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			mount({ "/": createElement("p", {}, "home"), "/other": createElement("p", {}, "other") });
+
+			await act(async () => {
+				history.replaceState(null, "", "/other");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+		it("should leave the scroll position alone when navigating programmatically", async () => {
+
+			const scroll = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+			const Navigator: FunctionComponent = () => {
+
+				const navigate = useRouter();
+
+				useEffect(() => navigate("/other"), []);
+
+				return null;
+
+			};
+
+			mount({ "/": createElement(Navigator, {}), "/other": createElement("p", {}, "other") });
+
+			await act(async () => {});
+
+			expect(text()).toBe("other");
+			expect(scroll).not.toHaveBeenCalled();
+
+		});
+
+	});
+
+	describe("focus", () => {
+
+		beforeEach(() => {
+			vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+		});
+
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+
+		it("should move the focus to the main landmark when following a link", async () => {
+
+			mount({
+				"/": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1 }, createElement("a", { href: "/other" }, "link")),
+				"/other": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1 }, "other")
+			});
+
+			document.querySelector("a")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement?.localName).toBe("main");
+			expect(document.activeElement?.textContent).toBe("other");
+
+		});
+
+		it("should clear the focus when following a link to a page with no main landmark", async () => {
+
+			shell([
+				createElement("button", { key: "outside" }, "outside"),
+				createElement<{ children: Routing }>(Routes, {
+					key: "routes", children: {
+						"/": createElement("a", { href: "/other" }, "link"),
+						"/other": createElement("p", {}, "other")
+					}
+				})
+			]);
+
+			document.querySelector("button")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement).toBe(document.body);
+
+		});
+
+		it("should leave the focus alone on a link changing the annex alone", async () => {
+
+			history.replaceState(null, "", "/items");
+
+			mount({ "/items": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1 }, createElement("a", { href: "/items;table" }, "table")) });
+
+			document.querySelector("a")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement?.localName).toBe("a");
+
+		});
+
+	});
+
+	describe("history", () => {
+
+		it("should render again on browser history navigation", async () => {
+
+			shell(createElement(Here, {}));
+
+			act(() => {
+				history.replaceState(null, "", "/other");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(text()).toBe("/other");
+
+		});
+
+		it("should route clicks on local anchors through history", async () => {
+
+			mount({
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement("p", {}, "other")
+			});
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/other");
+			expect(text()).toBe("other");
+
+		});
+
+		it("should resolve relative annex links as relative paths, as the browser does", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid?q=1#h");
+
+			mount({
+				"/courses/:id": createElement("a", { href: ";table" }, "link"),
+				"/courses/": createElement("p", {}, "list")
+			});
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/courses/;table");
+			expect(location.search).toBe("");
+			expect(location.hash).toBe("");
+
+		});
+
+		it("should follow annex links built from the current route", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid?q=1#h");
+
+			const Link: FunctionComponent = () => createElement("a", { href: `${useRoute()};table` }, "link");
+
+			mount({ "/courses/:id": createElement(Link, {}) });
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/courses/123;table");
+			expect(location.search).toBe("");
+			expect(location.hash).toBe("");
+
+		});
+
+	});
+
+	describe("images", () => {
+
+		function image(): HTMLImageElement | null {
+			return document.querySelector("img");
+		}
+
+		function picture(): VNode {
+			return createElement<JSX.ImgHTMLAttributes<HTMLImageElement>>("img", { src: "a.png", alt: "a" });
+		}
+
+		function key(key: string): KeyboardEvent {
+			const event = new KeyboardEvent("keydown", { key, cancelable: true });
+			act(() => { window.dispatchEvent(event); });
+			return event;
+		}
+
+
+		it("should enlarge an image on a plain click", async () => {
+
+			mount({ "/": picture() });
+
+			act(() => image()?.click());
+
+			expect(image()?.hasAttribute("active")).toBe(true);
+
+		});
+
+		it("should leave images inside links alone", async () => {
+
+			mount({
+				"/": createElement("p", {},
+					createElement("a", { href: "#fragment" }, createElement("img", { src: "a.png", alt: "a" })),
+					createElement("a", { href: "/other", target: "_blank" }, createElement("img", {
+						src: "b.png",
+						alt: "b"
+					}))
+				)
+			});
+
+			act(() => document.querySelectorAll("img").forEach(image => image.click()));
+
+			expect(document.querySelectorAll("img[active]").length).toBe(0);
+
+		});
+
+		it("should restore an enlarged image on a plain click", async () => {
+
+			mount({ "/": picture() });
+
+			act(() => image()?.click());
+			act(() => image()?.click());
+
+			expect(image()?.hasAttribute("active")).toBe(false);
+
+		});
+
+		it("should restore an enlarged image on Escape, claiming the key", async () => {
+
+			mount({ "/": picture() });
+
+			act(() => image()?.click());
+
+			const event = key("Escape");
+
+			expect(image()?.hasAttribute("active")).toBe(false);
+			expect(event.defaultPrevented).toBe(true);
+
+		});
+
+		it("should leave Escape alone when no image is enlarged", async () => {
+
+			mount({ "/": picture() });
+
+			expect(key("Escape").defaultPrevented).toBe(false);
+
+		});
+
+		it("should restore an enlarged image when the focus moves behind it", async () => {
+
+			mount({
+				"/": createElement("p", {},
+					createElement("img", { src: "a.png", alt: "a" }),
+					createElement("button", {}, "behind")
+				)
+			});
+
+			act(() => image()?.click());
+			act(() => document.querySelector("button")?.focus());
+
+			expect(image()?.hasAttribute("active")).toBe(false);
+
+		});
+
+	});
+
+});
+
+
+describe("Routes", () => {
+
+	describe("tables", () => {
+
+		it("should render the element matching the current route as it is", async () => {
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/other": createElement("p", {}, "other")
+			});
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should match named steps", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({ "/users/:id": createElement("p", {}, "matched") });
+
+			expect(text()).toBe("matched");
+
+		});
+
+		it("should match subtrees routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/123/posts/7");
+
+			mount({ "/users/:id/": createElement(section({ "/posts/:post": createElement(Here, {}) }), {}) });
+
+			expect(text()).toBe("/users/123/posts/7");
+
+		});
+
+		it("should match the root of subtrees not routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/");
+
+			mount({ "/users/": createElement("p", {}, "users") });
+
+			expect(text()).toBe("users");
+
+		});
+
+		it("should match routes below subtrees not routed by nested routes", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({ "/users/": createElement("p", {}, "users") });
+
+			expect(text()).toBe("users");
+
+		});
+
+		it("should match the root pattern alone", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			mount({ "/": createElement("p", {}, "home"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/other");
+
+		});
+
+		it("should match named steps as whole steps only", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({ "/users/:id": createElement("p", {}, "user"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/users/123/posts");
+
+		});
+
+		it("should match the first pattern in table order", async () => {
+
+			history.replaceState(null, "", "/users/new");
+
+			mount({
+				"/users/new": createElement("p", {}, "form"),
+				"/users/{id}": createElement("p", {}, "user")
+			});
+
+			expect(text()).toBe("form");
+
+		});
+
+		it("should ignore the query and the hash", async () => {
+
+			history.replaceState(null, "", "/?q=1#h");
+
+			mount({ "/": createElement("p", {}, "home") });
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should follow redirections, filling in wildcard references", async () => {
+
+			history.replaceState(null, "", "/people/123/about");
+
+			mount({ "/people/:id/": "/users/:id/", "/users/": createElement(Here, {}) });
+
+			expect(text()).toBe("/users/123/about");
+
+		});
+
+		it("should move the location to the redirection, replacing the history entry", async () => {
+
+			history.replaceState(null, "", "/old");
+
+			const length = history.length;
+
+			mount({ "/old": "/new", "/new": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/new");
+			expect(history.length).toBe(length);
+
+		});
+
+		it("should render the catch-all view for an unhandled route", async () => {
+
+			history.replaceState(null, "", "/a/b/c");
+
+			mount({ "/": createElement("p", {}, "home"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/a/b/c");
+
+		});
+
+		it("should match the catch-all pattern in table order", async () => {
+
+			mount({ "/": createElement("p", {}, "home"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should render the catch-all view for a redirection to an unhandled route", async () => {
+
+			history.replaceState(null, "", "/old");
+
+			mount({ "/old": "/missing", "*": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/missing");
+			expect(text()).toBe("/missing");
+
+		});
+
+		it("should move the location to the catch-all redirection, replacing the history entry", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			const length = history.length;
+
+			mount({ "/": createElement("p", {}, "home"), "*": "/" });
+
+			expect(location.pathname).toBe("/");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("home");
+
+		});
+
+		it("should reject an unhandled route", async () => {
+
+			expect(() => mount({ "/other": createElement("p", {}) })).toThrow("unhandled route /");
+
+		});
+
+		it("should reject a catch-all redirection to an unhandled route", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			expect(() => mount({ "/": createElement("p", {}), "*": "/missing" })).toThrow("redirection loop");
+
+		});
+
+		it("should reject a redirection loop", async () => {
+
+			expect(() => mount({ "/": "/a", "/a": "/b", "/b": "/a" })).toThrow("redirection loop");
+
+		});
+
+		it("should reject patterns not rooted, wherever they sit in the table", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "users": createElement("p", {}) }))
+				.toThrow("invalid route pattern <users>");
+
+			expect(() => mount({ "/": createElement("p", {}), "": createElement("p", {}) }))
+				.toThrow("invalid route pattern <>");
+
+		});
+
+		it("should reject wildcards other than the catch-all pattern", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "/*": createElement("p", {}) }))
+				.toThrow("invalid route pattern </*>");
+
+			expect(() => mount({ "/": createElement("p", {}), "/users/*": createElement("p", {}) }))
+				.toThrow("invalid route pattern </users/*>");
+
+			expect(() => mount({ "/": createElement("p", {}), "/*/users": createElement("p", {}) }))
+				.toThrow("invalid route pattern </*/users>");
+
+		});
+
+	});
+
+	describe("annexes", () => {
+
+		it("should match the root route carrying an annex", async () => {
+
+			history.replaceState(null, "", "/;grid");
+
+			mount({ "/": createElement("p", {}, "home") });
+
+			expect(text()).toBe("home");
+
+		});
+
+		it("should match the root of a subtree carrying an annex as the root of the section", async () => {
+
+			history.replaceState(null, "", "/courses/;grid");
+
+			mount({ "/courses/": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
+
+			expect(text()).toBe("list");
+
+		});
+
+		it("should match routes below a subtree carrying an annex", async () => {
+
+			history.replaceState(null, "", "/courses/123;lessons");
+
+			mount({ "/courses/": createElement(section({ "/:id": createElement(Here, {}) }), {}) });
+
+			expect(text()).toBe("/courses/123");
+
+		});
+
+		it("should match named steps without their annex", async () => {
+
+			history.replaceState(null, "", "/users/123;posts");
+
+			mount({ "/users/:id": createElement(Here, {}) });
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should take an annex before a trailing slash as the annex of the step", async () => {
+
+			history.replaceState(null, "", "/courses;grid");
+
+			mount({ "/courses/": createElement("p", {}, "list"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/courses");
+
+		});
+
+		it("should carry the annex along redirections", async () => {
+
+			history.replaceState(null, "", "/people/123;posts");
+
+			mount({ "/people/:id": "/users/:id", "/users/:id": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/users/123;posts");
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should carry the annex along section redirections", async () => {
+
+			history.replaceState(null, "", "/users/;grid");
+
+			mount({
+				"/users/": createElement(section({
+					"/": "/all",
+					"/all": createElement(Here, {})
+				}), {})
+			});
+
+			expect(location.pathname).toBe("/users/all;grid");
+			expect(text()).toBe("/users/all");
+
+		});
+
+		it("should match annexed patterns for routes carrying the same annex", async () => {
+
+			history.replaceState(null, "", "/;info");
+
+			mount({ "/;info": createElement("p", {}, "info"), "/": createElement("p", {}, "home") });
+
+			expect(text()).toBe("info");
+
+		});
+
+		it("should skip annexed patterns for routes carrying another annex or none", async () => {
+
+			const table = { "/;info": createElement("p", {}, "info"), "/": createElement("p", {}, "home") };
+
+			history.replaceState(null, "", "/;grid");
+			mount(table);
+			expect(text()).toBe("home");
+
+			history.replaceState(null, "", "/");
+			mount(table);
+			expect(text()).toBe("home");
+
+		});
+
+		it("should match annexed patterns on named steps", async () => {
+
+			history.replaceState(null, "", "/courses/123;lessons");
+
+			mount({ "/courses/:id;lessons": createElement(Here, {}) });
+
+			expect(text()).toBe("/courses/123");
+
+		});
+
+		it("should match annexed collection patterns as exact patterns rather than subtrees", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid");
+
+			mount({ "/courses/;grid": createElement("p", {}, "list"), "*": createElement(Here, {}) });
+
+			expect(text()).toBe("/courses/123");
+
+		});
+
+		it("should match annexed patterns within sections", async () => {
+
+			history.replaceState(null, "", "/users/;info");
+
+			mount({
+				"/users/": createElement(section({
+					"/;info": createElement("p", {}, "info"),
+					"/": createElement("p", {}, "list")
+				}), {})
+			});
+
+			expect(text()).toBe("info");
+
+		});
+
+		it("should replace the annex with the one the redirection names", async () => {
+
+			history.replaceState(null, "", "/;old");
+
+			mount({ "/;old": "/;new", "/": createElement(Annex, {}) });
+
+			expect(location.pathname).toBe("/;new");
+			expect(text()).toBe("new");
+
+		});
+
+		it("should drop the annex on redirections to a bare separator", async () => {
+
+			history.replaceState(null, "", "/;info");
+
+			mount({ "/;info": "/about;", "/about": createElement(Here, {}) });
+
+			expect(location.pathname).toBe("/about");
+			expect(text()).toBe("/about");
+
+		});
+
+		it("should reject redirection loops through annexes", async () => {
+
+			history.replaceState(null, "", "/;a");
+
+			expect(() => mount({ "/;a": "/;b", "/;b": "/;a", "/": createElement("p", {}) }))
+				.toThrow("redirection loop");
+
+		});
+
+		it("should reject annex separators in steps other than the last", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "/users;grid/123": createElement("p", {}) }))
+				.toThrow("invalid route pattern </users;grid/123>");
+
+		});
+
+		it("should reject empty annexes", async () => {
+
+			expect(() => mount({ "/": createElement("p", {}), "/users;": createElement("p", {}) }))
+				.toThrow("invalid route pattern </users;>");
+
+		});
+
+	});
+
+	describe("remounting", () => {
+
+		/**
+		 * Mounts a view counting how many times it is mounted, alongside a link and the navigator.
+		 */
+		function counting(href = "/catalogue/?~label=art") {
+
+			const mounts = vi.fn();
+			const navigators = vi.fn<(navigate: ReturnType<typeof useRouter>) => void>();
+
+			const View: FunctionComponent = () => {
+
+				useEffect(() => mounts(), []);
+
+				navigators(useRouter());
+
+				return createElement("a", { href }, "link");
+
+			};
+
+			history.replaceState(null, "", "/catalogue/");
+
+			mount({ "/catalogue/": createElement(View, {}) });
+
+			return { mounts, navigate: () => navigators.mock.lastCall![0] }; // test harness: View has rendered
+
+		}
+
+
+		it("should remount the view on a navigation changing the query alone", async () => {
+
+			const { mounts, navigate } = counting();
+
+			act(() => navigate()("/catalogue/?~label=art"));
+
+			expect(mounts).toHaveBeenCalledTimes(2);
+
+		});
+
+		it("should remount the view on a link changing the query alone", async () => {
+
+			const { mounts } = counting();
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(mounts).toHaveBeenCalledTimes(2);
+
+		});
+
+		it("should remount the view on browser history navigation changing the query alone", async () => {
+
+			const { mounts } = counting();
+
+			act(() => {
+				history.replaceState(null, "", "/catalogue/?~label=art");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(mounts).toHaveBeenCalledTimes(2);
+
+		});
+
+		it("should leave the view alone as the query is replaced outside the router", async () => {
+
+			const { mounts, navigate } = counting();
+
+			act(() => history.replaceState(null, "", "/catalogue/?~label=art"));
+			act(() => navigate()({ title: "Catalogue" })); // a title alone moves nowhere
+
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should leave the view mounted on a navigation changing the annex alone", async () => {
+
+			const { mounts, navigate } = counting();
+
+			act(() => navigate()(";table"));
+
+			expect(location.pathname).toBe("/catalogue/;table");
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should leave the view mounted on a link changing the annex alone", async () => {
+
+			const { mounts } = counting(";table");
+
+			act(() => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/catalogue/;table");
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+		it("should leave the view mounted on browser history navigation changing the annex alone", async () => {
+
+			const { mounts } = counting();
+
+			act(() => {
+				history.replaceState(null, "", "/catalogue/;table");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(mounts).toHaveBeenCalledTimes(1);
+
+		});
+
+	});
+
+	describe("layouts", () => {
+
+		it("should route within the layout wrapping it", async () => {
+
+			history.replaceState(null, "", "/other");
+
+			shell(createElement("main", {},
+				createElement("nav", {}, "menu "),
+				createElement(section({ "/other": createElement(Here, {}) }), {})
+			));
+
+			expect(text()).toBe("menu /other");
+
+		});
+
+	});
+
+	describe("sections", () => {
+
+		it("should match the trailing path left over by the enclosing pattern", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({
+				"/users/": createElement(section({
+					"/": createElement("p", {}, "list"),
+					"/:id": createElement(Here, {})
+				}), {})
+			});
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should match the root of the section", async () => {
+
+			history.replaceState(null, "", "/users/");
+
+			mount({ "/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}) });
+
+			expect(text()).toBe("list");
+
+		});
+
+		it("should nest to any depth", async () => {
+
+			history.replaceState(null, "", "/a/b/c");
+
+			mount({
+				"/a/": createElement(section({
+					"/b/": createElement(section({ "/c": createElement(Here, {}) }), {})
+				}), {})
+			});
+
+			expect(text()).toBe("/a/b/c");
+
+		});
+
+		it("should render the section catch-all view for a route not handled within the section", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({
+				"/users/": createElement("main", {}, "users ", createElement(section({
+					"/": createElement("p", {}, "list"),
+					"*": createElement(Here, {})
+				}), {}))
+			});
+
+			expect(text()).toBe("users /users/123/posts");
+
+		});
+
+		it("should move the location along the section catch-all redirection, relative to the section", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/users/": createElement(section({ "/": createElement("p", {}, "list"), "*": "/" }), {})
+			});
+
+			expect(location.pathname).toBe("/users/");
+			expect(text()).toBe("list");
+
+		});
+
+		it("should see the root route below the root pattern", async () => {
+
+			mount({ "/": createElement(section({ "/": createElement("p", {}, "root") }), {}) });
+
+			expect(text()).toBe("root");
+
+		});
+
+		it("should see the root route below a pattern other than a subtree", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({ "/users/:id": createElement(section({ "/": createElement(Here, {}) }), {}) });
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should see the route unchanged below the catch-all pattern", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({ "*": createElement(section({ "/users/:id": createElement(Here, {}) }), {}) });
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should see the route left over by the enclosing section below a nested catch-all pattern", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			mount({
+				"/users/": createElement(section({
+					"*": createElement(section({ "/:id": createElement(Here, {}) }), {})
+				}), {})
+			});
+
+			expect(text()).toBe("/users/123");
+
+		});
+
+		it("should redirect relative to the section, replacing the history entry", async () => {
+
+			history.replaceState(null, "", "/users/");
+
+			const length = history.length;
+
+			mount({
+				"/users/": createElement(section({
+					"/": "/all",
+					"/all": createElement(Here, {})
+				}), {})
+			});
+
+			expect(location.pathname).toBe("/users/all");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("/users/all");
+
+		});
+
+		it("should follow a section redirection reached through an enclosing redirection", async () => {
+
+			history.replaceState(null, "", "/");
+
+			const length = history.length;
+
+			mount({
+				"/": "/users/",
+				"/users/": createElement(section({
+					"/": "/all",
+					"/all": createElement(Here, {})
+				}), {})
+			});
+
+			expect(location.pathname).toBe("/users/all");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("/users/all");
+
+		});
+
+		it("should reject a route not handled within the section", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			expect(() => mount({
+				"/users/": createElement(section({ "/": createElement("p", {}) }), {})
+			})).toThrow("unhandled route /123");
+
+		});
+
+		it("should render the enclosing catch-all view for a route not handled within the section", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({
+				"/users/": createElement("main", {}, "users ", createElement(section({ "/": createElement("p", {}, "list") }), {})),
+				"*": createElement(Here, {})
+			});
+
+			expect(text()).toBe("users /users/123/posts");
+
+		});
+
+		it("should move the location along the enclosing catch-all redirection, relative to the section", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			const length = history.length;
+
+			mount({
+				"/": createElement("p", {}, "home"),
+				"/users/": createElement(section({ "/": createElement("p", {}, "list") }), {}),
+				"*": "/"
+			});
+
+			expect(location.pathname).toBe("/users/");
+			expect(history.length).toBe(length);
+			expect(text()).toBe("list");
+
+		});
+
+		it("should prefer the catch-all of the section to the enclosing one", async () => {
+
+			history.replaceState(null, "", "/users/123/posts");
+
+			mount({
+				"/users/": createElement(section({
+					"/": createElement("p", {}, "list"),
+					"*": createElement("p", {}, "section")
+				}), {}),
+				"*": createElement("p", {}, "root")
+			});
+
+			expect(text()).toBe("section");
+
+		});
+
+		it("should fall back to the catch-all of the nearest enclosing table declaring one", async () => {
+
+			history.replaceState(null, "", "/a/b/c");
+
+			mount({
+				"/a/": createElement(section({
+					"/b/": createElement(section({ "/": createElement("p", {}, "b") }), {}),
+					"*": createElement("p", {}, "a")
+				}), {}),
+				"*": createElement("p", {}, "root")
+			});
+
+			expect(text()).toBe("a");
+
+		});
+
+		it("should reject an enclosing catch-all redirection to a route not handled within the section", async () => {
+
+			history.replaceState(null, "", "/users/123");
+
+			expect(() => mount({
+				"/users/": createElement(section({ "/": createElement("p", {}) }), {}),
+				"*": "/missing"
+			})).toThrow("redirection loop");
+
+		});
+
+	});
+
+});
+
+
+describe("useRoute", () => {
+
+	it("should return an empty route outside any router", async () => {
+
+		act(() => render(createElement(Here, {}), document.body));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return the current route", async () => {
+
+		history.replaceState(null, "", "/current");
+
+		shell(createElement(Here, {}));
+
+		expect(text()).toBe("/current");
+
+	});
+
+	it("should return the current route without its annex", async () => {
+
+		history.replaceState(null, "", "/courses/;grid");
+
+		shell(createElement(Here, {}));
+
+		expect(text()).toBe("/courses/");
+
+	});
+
+});
+
+
+describe("useAnnex", () => {
+
+	it("should return an empty annex outside any router", async () => {
+
+		act(() => render(createElement(Annex, {}), document.body));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return an empty annex for a route carrying none", async () => {
+
+		history.replaceState(null, "", "/courses/123");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return the annex of the last step", async () => {
+
+		history.replaceState(null, "", "/courses/123;lessons");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("lessons");
+
+	});
+
+	it("should return the annex of the root route", async () => {
+
+		history.replaceState(null, "", "/;grid");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("grid");
+
+	});
+
+	it("should return an empty annex for a bare separator", async () => {
+
+		history.replaceState(null, "", "/courses/;");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return the annex as it appears in the location path", async () => {
+
+		history.replaceState(null, "", "/courses/;view=grid;sort=label");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("view=grid;sort=label");
+
+	});
+
+	it("should leave the query and the hash out", async () => {
+
+		history.replaceState(null, "", "/courses/;grid?q=1#h");
+
+		shell(createElement(Annex, {}));
+
+		expect(text()).toBe("grid");
+
+	});
+
+	it("should ignore separators in steps other than the last", async () => {
+
+		history.replaceState(null, "", "/courses;grid/123");
+
+		shell(createElement("p", {}, createElement(Here, {}), " ", createElement(Annex, {})));
+
+		expect(text()).toBe("/courses;grid/123 ");
+
+	});
+
+	it("should render again on browser history navigation changing the annex", async () => {
+
+		history.replaceState(null, "", "/;grid");
+
+		shell(createElement(Annex, {}));
+
+		act(() => {
+			history.replaceState(null, "", "/;table");
+			window.dispatchEvent(new PopStateEvent("popstate"));
+		});
+
+		expect(text()).toBe("table");
+
+	});
+
+});
+
+
+describe("useTitle", () => {
+
+	function probe() {
+
+		const navigators = vi.fn<(navigator: Router) => void>();
+
+		const Title: FunctionComponent = () => {
+			navigators(useRouter());
+			return createElement("output", {}, useTitle());
+		};
+
+		const navigate = (...args: Parameters<Router>): void => {
+			act(() => navigators.mock.lastCall?.[0](...args));
+		};
+
+		return { Title, navigate };
+
+	}
+
+	function page(Title: FunctionComponent, routes: Routing = { "*": createElement("p", {}) }): void {
+		shell(createElement("div", {}, createElement(Title, {}), createElement(Routes, { children: routes })));
+	}
+
+
+	it("should return an empty title outside any router", async () => {
+
+		const { Title } = probe();
+
+		act(() => render(createElement(Title, {}), document.body));
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return an empty title if none was set", async () => {
+
+		const { Title } = probe();
+
+		page(Title);
+
+		expect(text()).toBe("");
+
+	});
+
+	it("should return the title tidied and without the app name", async () => {
+
+		const { Title, navigate } = probe();
+
+		page(Title);
+
+		navigate({ title: " Other  Page " });
+
+		expect(text()).toBe("Other Page");
+		expect(document.title).toBe("Other Page | App");
+
+	});
+
+	it("should return an empty title for a title equal to the app name", async () => {
+
+		const { Title, navigate } = probe();
+
+		page(Title);
+
+		navigate({ title: "App" });
+
+		expect(text()).toBe("");
+		expect(document.title).toBe("App");
+
+	});
+
+	it("should return the title set along with a route", async () => {
+
+		const { Title, navigate } = probe();
+
+		page(Title);
+
+		navigate({ route: "/other", title: "Other" });
+
+		expect(location.pathname).toBe("/other");
+		expect(text()).toBe("Other");
+
+	});
+
+	it("should render again only the components reading the title on a change of title alone", async () => {
+
+		const { Title, navigate } = probe();
+
+		const renders = vi.fn();
+
+		const Route: FunctionComponent = () => {
+			renders();
+			return createElement("p", {}, useRoute());
+		};
+
+		page(Title, { "*": createElement(Route, {}) });
+
+		const before = renders.mock.calls.length;
+
+		navigate({ title: "Title" });
+
+		expect(text()).toBe("Title/");
+		expect(renders).toHaveBeenCalledTimes(before);
+
+	});
+
+	describe("clearing", () => {
+
+		it("should keep the title on a navigation changing the annex alone", async () => {
+
+			const { Title, navigate } = probe();
+
+			page(Title);
+
+			navigate({ title: "Courses" });
+			navigate("/;grid");
+
+			expect(text()).toBe("Courses");
+			expect(document.title).toBe("Courses | App");
+
+		});
+
+		it("should keep the title on a navigation changing the query alone", async () => {
+
+			const { Title, navigate } = probe();
+
+			page(Title);
+
+			navigate({ title: "Courses" });
+			navigate("/?q=art");
+
+			expect(text()).toBe("Courses");
+
+		});
+
+		it("should clear the title on a navigation to another route naming none", async () => {
+
+			const { Title, navigate } = probe();
+
+			page(Title);
+
+			navigate({ title: "Home" });
+			navigate("/other");
+
+			expect(text()).toBe("");
+			expect(document.title).toBe("App");
+
+		});
+
+		it("should clear the title on a link to another route", async () => {
+
+			const { Title, navigate } = probe();
+
+			page(Title, {
+				"/": createElement("a", { href: "/other" }),
+				"/other": createElement("p", {})
+			});
+
+			navigate({ title: "Home" });
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(location.pathname).toBe("/other");
+			expect(text()).toBe("");
+			expect(document.title).toBe("App");
+
+		});
+
+		it("should clear the title on browser history navigation to another route", async () => {
+
+			const { Title, navigate } = probe();
+
+			page(Title);
+
+			navigate({ title: "Home" });
+
+			act(() => {
+				history.replaceState(null, "", "/other");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(text()).toBe("");
+			expect(document.title).toBe("App");
+
+		});
+
+		it("should let the view arrived on set its own title again on browser history navigation", async () => {
+
+			const { Title, navigate } = probe();
+
+			const titled = (title: string): FunctionComponent => () => {
+				const router = useRouter();
+				useEffect(() => router({ title }), []);
+				return createElement("p", {});
+			};
+
+			page(Title, {
+				"/": createElement(titled("Home"), {}),
+				"/other": createElement(titled("Other"), {})
+			});
+
+			navigate("/other");
+
+			expect(text()).toBe("Other");
+
+			act(() => {
+				history.replaceState(null, "", "/");
+				window.dispatchEvent(new PopStateEvent("popstate"));
+			});
+
+			expect(text()).toBe("Home");
+			expect(document.title).toBe("Home | App");
+
+		});
+
+		it("should carry the title along redirections", async () => {
+
+			const { Title, navigate } = probe();
+
+			page(Title, {
+				"/": createElement("p", {}),
+				"/old": "/new",
+				"/new": createElement("p", {})
+			});
+
+			navigate({ route: "/old", title: "Moved" });
+
+			expect(location.pathname).toBe("/new");
+			expect(text()).toBe("Moved");
+			expect(document.title).toBe("Moved | App");
+
+		});
+
+	});
+
+});
+
+
+describe("useRouter", () => {
+
+	function probe() {
+
+		const navigators = vi.fn<(navigator: Router) => void>();
+
+		const Probe: FunctionComponent = () => {
+			navigators(useRouter());
+			return createElement("output", {}, useRoute()); // reads the route, so it renders again on navigation
+		};
+
+		return { navigators, Probe };
+
+	}
+
+	function navigate(navigators: ReturnType<typeof probe>["navigators"], ...args: Parameters<Router>): void {
+		act(() => navigators.mock.lastCall?.[0](...args));
+	}
+
+
+	it("should return a no-op outside any router", async () => {
+
+		const { navigators, Probe } = probe();
+
+		act(() => render(createElement(Probe, {}), document.body));
+
+		expect(() => navigate(navigators, "/other")).not.toThrow();
+		expect(location.pathname).toBe("/");
+
+	});
+
+	it("should navigate to a route, adding a history entry", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		const length = history.length;
+
+		navigate(navigators, "/other");
+
+		expect(location.pathname).toBe("/other");
+		expect(history.length).toBe(length+1);
+		expect(text()).toBe("/other");
+
+	});
+
+	it("should replace the current history entry if required", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		const length = history.length;
+
+		navigate(navigators, { route: "/other", replace: true });
+
+		expect(location.pathname).toBe("/other");
+		expect(history.length).toBe(length);
+		expect(text()).toBe("/other");
+
+	});
+
+	it("should replace the current history entry when navigating to the current route", async () => {
+
+		history.replaceState(null, "", "/other");
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		const length = history.length;
+
+		navigate(navigators, "/other");
+
+		expect(location.pathname).toBe("/other");
+		expect(history.length).toBe(length);
+
+	});
+
+	it("should set the document title and the history state", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		navigate(navigators, { route: "/other", title: " Other  Page ", state: { key: "value" } });
+
+		expect(location.pathname).toBe("/other");
+		expect(document.title).toBe("Other Page | App");
+		expect(history.state).toEqual({ key: "value" });
+
+	});
+
+	it("should leave the app name alone for a blank title", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		navigate(navigators, { title: " " });
+
+		expect(document.title).toBe("App");
+
+	});
+
+	it("should keep the current route if omitted", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		navigate(navigators, { title: "Title" });
+
+		expect(location.pathname).toBe("/");
+		expect(document.title).toBe("Title | App");
+
+	});
+
+	it("should hand out the same navigator across navigations", async () => {
+
+		const { navigators, Probe } = probe();
+
+		shell(createElement(Probe, {}));
+
+		navigate(navigators, "/other");
+
+		const handed = navigators.mock.calls.map(([navigator]) => navigator);
+
+		expect(handed.length).toBeGreaterThan(1);
+		expect(handed.at(-1)).toBe(handed[0]);
+
+	});
+
+	describe("annexes", () => {
+
+		it("should navigate to a route carrying an annex", async () => {
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, "/courses/;table");
+
+			expect(location.pathname).toBe("/courses/;table");
+			expect(text()).toBe("/courses/");
+
+		});
+
+		it("should resolve relative annexes on collections, dropping the query and the hash", async () => {
+
+			history.replaceState(null, "", "/courses/;grid?q=1#h");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			const length = history.length;
+
+			navigate(navigators, ";table");
+
+			expect(location.pathname).toBe("/courses/;table");
+			expect(location.search).toBe("");
+			expect(location.hash).toBe("");
+			expect(history.length).toBe(length+1);
+
+		});
+
+		it("should resolve relative annexes on resources as relative paths, replacing the last step", async () => {
+
+			history.replaceState(null, "", "/courses/123");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, ";table");
+
+			expect(location.pathname).toBe("/courses/;table");
+
+		});
+
+		it("should navigate to annexed routes built from the current route", async () => {
+
+			history.replaceState(null, "", "/courses/123;grid?q=1");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, `${text()};table`); // the probe shows the current route
+
+			expect(location.pathname).toBe("/courses/123;table");
+			expect(location.search).toBe("");
+
+		});
+
+		it("should replace the annex through the navigation details", async () => {
+
+			history.replaceState(null, "", "/courses/;grid");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, { route: ";table", replace: true });
+
+			expect(location.pathname).toBe("/courses/;table");
+
+		});
+
+		it("should read a bare separator as an empty annex", async () => {
+
+			history.replaceState(null, "", "/courses/;grid?q=1");
+
+			const { navigators, Probe } = probe();
+
+			shell(createElement(Probe, {}));
+
+			navigate(navigators, ";");
+
+			expect(location.pathname).toBe("/courses/;");
+			expect(location.search).toBe("");
+			expect(text()).toBe("/courses/");
+
+		});
+
+	});
+
+});
+
+
+describe("location", () => {
+
+	const Nav = ({ route }: { route: string }) => {
+		const router = useRouter();
+		return createElement("button", { onClick: () => router(route) }, useRoute());
+	};
+
+	function click(): void {
+		act(() => document.querySelector("button")?.click());
+	}
+
+
+	it("should draw routes from the location path", async () => {
+
+		history.replaceState(null, "", "/a/b?q=1#h");
+
+		shell(createElement(Here, {}));
+
+		expect(text()).toBe("/a/b");
+
+	});
+
+	it("should navigate to absolute routes", async () => {
+
+		history.replaceState(null, "", "/a/b");
+
+		shell(createElement(Nav, { route: "/c/d" }));
+
+		click();
+
+		expect(location.pathname).toBe("/c/d");
+		expect(text()).toBe("/c/d");
+
+	});
+
+	it("should resolve relative routes against the current location", async () => {
+
+		history.replaceState(null, "", "/a/b?q=1#h");
+
+		shell(createElement(Nav, { route: "c" }));
+
+		click();
+
+		expect(location.pathname).toBe("/a/c");
+		expect(text()).toBe("/a/c");
+
+	});
+
+});

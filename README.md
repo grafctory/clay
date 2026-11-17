@@ -1,15 +1,23 @@
 # @metreeca/clay
 
-Minimalist component toolkit for Preact interfaces.
+Minimalist UI toolkit for Preact.
 
-Screens are composed in JSX from general-purpose widgets and layouts, with no commitment to a data model. The
-[@metreeca/skin] design system is optional: components work without it and follow the platform colour scheme with it.
+Interfaces are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services:
+
+- **Accessible Widgets**: keyboard paths, focus handling and screen reader announcements designed to WCAG 2.2 AA
+- **Model-Agnostic Components**: no commitment to a data model, so an app feeds them whatever data it handles
+- **Testable Behaviour**: app behaviour kept in framework-agnostic `@metreeca/core` state objects, tested without a DOM
+- **Shared Services**: routing, a fetch client, a status board and storage, provided once and reached through hooks
+
+Components read their colours, faces and spacing from the [@metreeca/skin] token contract. Its stylesheet is optional:
+components work without it, and follow the platform colour scheme and the app branding with it.
 
 # Installation
 
 ```shell
-npm install @metreeca/skin            # design system package, optional
-npm install @metreeca/clay            # Preact contexts and hooks
+npm install @metreeca/skin            # design system stylesheet, optional
+npm install @metreeca/clay            # contexts and hooks
+npm install @metreeca/clay-<package>  # one per package the app takes up
 ```
 
 > [!WARNING]
@@ -17,20 +25,30 @@ npm install @metreeca/clay            # Preact contexts and hooks
 > TypeScript consumers must use `"moduleResolution": "nodenext"/"node16"/"bundler"` in `tsconfig.json`.
 > The legacy `"node"` resolver is not supported.
 
-| Package          | Description        |
-|------------------|--------------------|
-| [@metreeca/clay] | Contexts and hooks |
+Add the interface components the app's screens need, each from its own package, with the peer dependencies it lists.
+
+An app brands the [@metreeca/skin] stylesheet by overriding its tokens: its
+[theming guide](https://github.com/metreeca/skin#theming) covers colours, faces, spacing and every other token family.
+
+| Package                   | Description          |
+|---------------------------|----------------------|
+| [@metreeca/clay]          | Contexts and hooks   |
+| [@metreeca/clay-widgets]  | Interface components |
+| [@metreeca/clay-markdown] | Markdown documents   |
 
 [@metreeca/skin]: https://metreeca.github.io/skin/
 
 [@metreeca/clay]: https://metreeca.github.io/clay/modules/_metreeca_clay.html
 
+[@metreeca/clay-widgets]: https://metreeca.github.io/clay/modules/_metreeca_clay-widgets.html
+
+[@metreeca/clay-markdown]: https://metreeca.github.io/clay/modules/_metreeca_clay-markdown.html
+
 # Usage
 
 > [!NOTE]
 >
-> Each package documents its own API in its README and API reference; for complete coverage, see the
-> [API reference](https://metreeca.github.io/clay/).
+> Each package documents its API in the [API reference](https://metreeca.github.io/clay/).
 
 # Support
 

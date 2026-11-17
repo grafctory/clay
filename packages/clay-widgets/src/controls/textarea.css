@@ -1,0 +1,50 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A text area is drawn as the design system draws every native field, standing wherever the layout places it. */
+
+clay-textarea {
+
+    display: contents;
+
+    /*
+     * The area expands to fit the text typed into it, where the browser sizes fields to their content, and never stands
+     * shorter than the lines the widget sets inline, inside its padding and border, so an empty area still reads as a
+     * place to write a paragraph in rather than as a field waiting for a short value.
+     */
+
+    /*
+     * Sizing to the content applies across the line as well, which would leave an empty area a sliver wide; the area
+     * spans the column a label stacks it in instead, growing downwards only, as a paragraph does.
+     */
+
+    & > textarea {
+        align-self: stretch;
+        field-sizing: content;
+        min-block-size: calc(var(--clay-textarea-rows, 3) * 1lh + 2 * (var(--skin--spacing-050) + var(--skin--border-width)));
+    }
+
+    /*
+     * A growing area takes the height its column leaves on top of what its text asks for, and never shrinks below
+     * that text, so a text running past the room taken lengthens the column rather than scrolling inside the area. An
+     * area wrapped by a growing label fills the room the label takes alike, whether told to grow or not.
+     */
+
+    &[grow] > textarea, clay-label[grow] > label > & > textarea {
+        flex: 1 0 auto;
+    }
+
+}

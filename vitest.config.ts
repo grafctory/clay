@@ -1,5 +1,5 @@
 /*
- * Copyright © 2025-2026 Metreeca srl
+ * Copyright © 2026 Metreeca srl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,11 @@ export default defineConfig({
 		 * Allows workspace packages without test files to pass cleanly during `npm run check --workspaces`.
 		 */
 		passWithNoTests: true,
+
+		/**
+		 * Runs every test in a DOM, whether launched by `npm run check` or straight from the IDE.
+		 */
+		environment: "happy-dom",
 
 		/**
 		 * Keeps DOM tests off the network: a link a test leaves to its default behaviour, such as one targeting

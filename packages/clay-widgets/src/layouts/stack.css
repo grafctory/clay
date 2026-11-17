@@ -1,0 +1,58 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The stack is a column and nothing else. The alignment, the gap and the growth are settled by the widget on the
+ * element, being chosen by whoever renders the stack rather than by a rule written ahead of time. Only the split
+ * placements live here, as they reach the item set apart rather than the stack.
+ */
+
+clay-stack {
+
+    display: flex;
+    flex-direction: column;
+
+    /*
+     * A stack given a look stands on a surface of its own. The page colour is retuned to the surface rather than
+     * painted over it, so everything inside reads as standing on the stack. A stack stating no look draws nothing,
+     * whatever the look of the area around it, so one surface never outlines every layout nested inside it. A
+     * strong look takes the raised colour edged by a border rather than a shadow, so it stands apart with no depth.
+     */
+
+    &[look] {
+        padding: var(--skin--spacing-100);
+        border-radius: var(--skin--border-radius-050);
+        background-color: var(--skin--background-color);
+    }
+
+    &[look="subtle"] {
+        --skin--background-color: var(--skin--background-color-sunken);
+    }
+
+    &[look="strong"] {
+        --skin--background-color: var(--skin--background-color-raised);
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+    }
+
+    &[place="head"] > :first-child {
+        margin-block-end: auto;
+    }
+
+    &[place="tail"] > :last-child {
+        margin-block-start: auto;
+    }
+
+}

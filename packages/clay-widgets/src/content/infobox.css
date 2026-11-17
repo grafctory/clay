@@ -1,0 +1,186 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * An infobox lays its sections out on a single two-column grid, labels in the first column and values in the second.
+ * Each section, a definition list of its own, spans both columns on a subgrid, so labels and values line up across
+ * sections. At the start, labels keep to the leading edge of their column as values do, so both columns read as
+ * aligned text; at the end, they sit flush against the values they introduce, so each label reads as their caption.
+ */
+
+clay-infobox {
+
+    /*
+     * Labels take the width they need up to what the values leave them, so a long label is clipped rather than
+     * crowding out the values it is there to introduce, which keep the larger share of the width whatever the labels
+     * ask for. Labels and values have no edge between them to tell the two columns apart, so they are set well apart
+     * to read as two columns rather than as one run of text, whichever edge of their column the labels keep to.
+     */
+
+    display: grid;
+    grid-template-columns: minmax(0, min-content) minmax(50%, 1fr);
+    column-gap: var(--skin--spacing-100);
+
+    /* An infobox leaves the room a plain definition list leaves below it, so it is spaced as one in a page flow. */
+
+    margin-bottom: var(--skin--spacing-100);
+
+    & > dl {
+
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: subgrid;
+        align-items: baseline;
+        row-gap: var(--skin--spacing-010);
+
+        margin: 0;
+
+        /* Sections are set apart by a rule, so a screen groups related properties by section. */
+
+        & + dl {
+            margin-top: var(--skin--spacing-075);
+            padding-top: var(--skin--spacing-075);
+            border-top-style: var(--skin--border-style);
+        }
+
+        /*
+         * Spacing between entries comes from the grid gap, replacing the margins the base list rules set. Labels and
+         * values are kept to one line each, clipped with an ellipsis where they outrun their column, so one long value
+         * neither wraps the row nor widens the infobox; wrapping infoboxes release values from this rule, as set below.
+         *
+         * The clip reaches past the box, clear of the focus mark of any link the cell holds, so the mark
+         * shows whole while the ellipsis still cuts text at the edge of the box, where the column ends for the reader.
+         */
+
+        & > dt,
+        & > dd {
+            overflow: clip;
+            overflow-clip-margin: var(--skin--spacing-050);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin: 0;
+        }
+
+        /*
+         * Labels are guidance rather than text, so they differ from their values by colour alone: they take the size
+         * and weight of the values beside them, sharing their line, in the label colour the base list rules give a
+         * term, which holds the 4.5:1 a text role owes in both schemes.
+         */
+
+        & > dt {
+            text-transform: capitalize;
+            font-size: inherit;
+            font-weight: inherit;
+        }
+
+        & > dd {
+
+            /* Nothing in a value grows wider than its column, so a widget there is clipped by its own rules. */
+
+            & > *,
+            & > ul > li > * {
+                max-width: 100%;
+            }
+
+            /*
+             * A value listing several items sets them one per line, marked as any list, with no step between items, so
+             * the list reads as a single value rather than as a run of separate entries. Markers hang in the gap before
+             * the column, so items keep to the edge the values of other properties start from.
+             */
+
+            &:has(> ul) {
+
+                /*
+                 * A value holding a list stops clipping, which would hide the hanging markers; the list clips instead,
+                 * at the trailing edge, leaving the width of the column gap to the markers at the leading one, and room
+                 * for the focus mark of a link above and below, as the value would.
+                 */
+
+                overflow: visible;
+
+                & > ul {
+
+                    /* Physical, as the base list rule this undoes sets the leading room on the left. */
+
+                    padding-left: 0;
+
+                    clip-path: inset(
+                            calc(-1 * var(--skin--spacing-050)) 0 calc(-1 * var(--skin--spacing-050)) calc(-1 * var(--skin--spacing-100))
+                    );
+
+                    /*
+                     * Items are marked by a small grey dot, telling a value made of several items from a single one
+                     * without competing with the items themselves. Markers carry no meaning a colour role would name,
+                     * so the grey is mixed from text and page as the grey scale is, at the lightest shares holding the
+                     * 3:1 a graphic conveying content owes on the page, the stripe and the raised, overlay and sunken
+                     * surfaces. The tightest is the sunken one in the light scheme, at 3.08:1, and the overlay in the
+                     * dark one, at 3.09:1; half a point less brings either to the very threshold.
+                     */
+
+                    list-style-type: "· ";
+
+                    & > li::marker {
+                        color: light-dark(
+                                color-mix(in oklab, var(--skin--color) 36%, var(--skin--background-color)),
+                                color-mix(in oklab, var(--skin--color) 47%, var(--skin--background-color))
+                        );
+                    }
+
+                    /* A single item reads as a plain value, so it takes no marker. */
+
+                    & > li:only-child {
+                        list-style-type: none;
+                    }
+
+                    & > li + li {
+                        margin-top: 0;
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    /*
+     * Wrapping, a long value wraps within its column rather than being clipped, so a value is shown in full however
+     * long it runs, and a word outrunning the column alone, as a long address, breaks wherever needed to fit it.
+     */
+
+    &[wrap] > dl > dd {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    /*
+     * Wrapping values may run over several lines, so labels are set strong in the label colour, standing out from
+     * the values beside them as headings of their rows rather than by colour alone.
+     */
+
+    &[wrap] > dl > dt {
+        font-weight: var(--skin--font-weight-strong);
+        color: var(--skin--color-label);
+    }
+
+    /* At the end, labels sit flush against the values they introduce. */
+
+    &[align="end"] > dl > dt {
+        text-align: end;
+    }
+
+}

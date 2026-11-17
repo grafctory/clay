@@ -1,0 +1,60 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A Markdown document is plain markup, which the design system styles as it styles the same markup anywhere else on
+ * the page, GitHub alerts, highlighted fenced code and the table of contents outlining a document included. This sheet
+ * adds only what no markup of the design system carries: images sized to the share of the width their source hints,
+ * and a heading for the footnotes, which is meant for assistive technologies alone and kept out of the visual layout.
+ */
+
+clay-markdown {
+
+    display: block;
+
+    /*
+     * A document followed by other content is set apart from it as any other block of the design system is.
+     */
+
+    &:not(:last-child) {
+        margin-bottom: var(--skin--spacing-150);
+    }
+
+    /*
+     * The footnotes heading names the section footnote references point to, and reads as noise to a sighted reader
+     * who sees the footnotes set apart already, so it is taken out of view while staying in the accessibility tree.
+     */
+
+    & [data-footnotes] > h2 {
+        position: absolute;
+        inline-size: 1px; /* A box no smaller than one pixel, which some screen readers skip at zero size. */
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    /*
+     * An image sized by a percentage hint takes that share of the width of the block holding it, keeping its
+     * proportions. An enlarged image is left out: this unlayered rule would otherwise outrank the layered one sizing
+     * an image lifted out of the text to the viewport, pinning it at its own width against the left margin.
+     */
+
+    & img:not([active]) {
+        width: var(--clay-markdown-width, auto);
+    }
+
+}

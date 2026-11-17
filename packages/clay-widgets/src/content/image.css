@@ -1,0 +1,176 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * An image is a block as wide as its picture and scaled down to the room it is given, adding no spacing of its own,
+ * so it sits in a card, a stack or a column exactly as the bare picture would, with its caption held beneath it.
+ */
+
+/* The look of an image stating none, which an area assigns to every image it holds. */
+
+@property --clay-image-look {
+    syntax: "subtle | normal | strong";
+    inherits: true;
+    initial-value: normal;
+}
+
+/*
+ * The box the picture is scaled down to fit within, as set by the image. A width CSS does not accept, `none` included,
+ * leaves the width knob at its initial value, so the picture is then bounded by the column alone.
+ */
+
+@property --clay-image-max-width {
+    syntax: "<length-percentage>";
+    inherits: false;
+    initial-value: 100%;
+}
+
+@property --clay-image-max-height {
+    syntax: "<length-percentage> | none";
+    inherits: true; /* Read by the picture inside the image, not by the image that sets it. */
+    initial-value: none;
+}
+
+clay-image {
+
+    display: block;
+    width: fit-content;
+    max-width: min(100%, var(--clay-image-max-width));
+
+    & > figure {
+        margin: 0;
+    }
+
+    /*
+     * A picture is never stretched past its own size, and keeps its proportions when scaled down. An enlarged picture
+     * is left alone, since this rule would otherwise beat the design system one showing it over the viewport.
+     */
+
+    & img:not([active]) {
+        display: block;
+        max-width: 100%;
+        max-height: var(--clay-image-max-height);
+        height: auto;
+    }
+
+    /*
+     * The caption takes no width of its own, so a long caption wraps within the width of the picture rather than
+     * widening the block. Its size, colour and distance from the picture come from the design system figure rules.
+     *
+     * Small wording flush with the hard edge of a picture reads as standing to its left, so the caption is nudged
+     * right, shifting its rendering alone and leaving the line its wording wraps in intact.
+     */
+
+    & figcaption {
+        box-sizing: border-box;
+        width: 0;
+        min-width: 100%;
+        translate: var(--skin--border-width) 0;
+    }
+
+    /*
+     * Floated, the image is the one place it takes spacing of its own: the text wrapping around it keeps off the
+     * picture on the side it faces and off its bottom edge, so a column of wrapped lines, ragged against the picture,
+     * still reads as standing clear of it however its lines happen to break against it.
+     */
+
+    &[float="start"] {
+        float: inline-start;
+        margin-inline-end: var(--skin--spacing-200);
+        margin-bottom: var(--skin--spacing-200);
+    }
+
+    &[float="end"] {
+        float: inline-end;
+        margin-inline-start: var(--skin--spacing-200);
+        margin-bottom: var(--skin--spacing-200);
+    }
+
+    /*
+     * Normal, the picture is outlined with the quiet border the design system draws around content, and the caption
+     * is inset by the width of the border as well, so its wording keeps to the picture rather than to the outline.
+     */
+
+    &[look="normal"] {
+
+        & img {
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        }
+
+        & figcaption {
+            padding-inline: var(--skin--border-width);
+        }
+
+    }
+
+    /*
+     * Strong, picture and caption sit in a rounded box, the picture rounded tighter than the box, so its corners follow
+     * the corners of the box around it rather than meeting them at a sharper angle.
+     */
+
+    &[look="strong"] {
+
+        padding: var(--skin--spacing-050);
+
+        border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+        border-radius: var(--skin--border-radius-050);
+
+        & img {
+            border-radius: var(--skin--border-radius-025);
+        }
+
+    }
+
+    /*
+     * An image stating no look of its own takes the one the area around it sets, read off the `--clay-image-look`
+     * knob through a style query, as buttons and links do: the attribute has to be absent for the container to have
+     * a say, so each rule here holds itself to an image carrying none, restating the declarations of the rules above.
+     */
+
+    @container style(--clay-image-look: normal) {
+
+        &:not([look]) {
+
+            & img {
+                border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+            }
+
+            & figcaption {
+                padding-inline: var(--skin--border-width);
+            }
+
+        }
+
+    }
+
+    @container style(--clay-image-look: strong) {
+
+        &:not([look]) {
+
+            padding: var(--skin--spacing-050);
+
+            border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+            border-radius: var(--skin--border-radius-050);
+
+            & img {
+                border-radius: var(--skin--border-radius-025);
+            }
+
+        }
+
+    }
+
+}

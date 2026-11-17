@@ -1,0 +1,229 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A link starts from the colour, the hover colour and the focus mark the design system gives any anchor, and this
+ * sheet says how loud it appears on top of that. Every step keeps the face and size of the text around it, and holds
+ * its colour through the press. The ordinary step is underlined, so it is told from that text wherever colour fails.
+ */
+
+/* The look of a link stating none, which an area assigns to every link it holds. */
+
+@property --clay-link-look {
+    syntax: "subtle | normal | strong";
+    inherits: true;
+    initial-value: normal;
+}
+
+/*
+ * How far the hover fill of a glyph standing alone reaches past it, and the focus mark with it. Registered without a
+ * type, so a value stated in `em` resolves on the link it reaches rather than on the element declaring it.
+ */
+
+@property --clay-link-inset {
+    syntax: "*";
+    inherits: true;
+}
+
+clay-link {
+
+    display: inline-flex;
+
+    /*
+     * A logo or an icon in the link is centred on its wording, without stretching the line the link stands in, and
+     * kept apart from it by a gap wider than a space, so the glyph reads as a mark set beside the words it leads.
+     *
+     * A link short of room cuts its wording short with an ellipsis, wherever the area around it caps its width and
+     * keeps it to one line. Logos and icons beside the wording are left whole, however little room remains.
+     */
+
+    & > a {
+
+        display: inline-flex;
+        align-items: center;
+        column-gap: var(--skin--spacing-050);
+        min-width: 0;
+
+        font-weight: inherit;
+        text-decoration-line: underline;
+
+        /*
+         * The underline is drawn a little below the baseline, within the line rather than below the descenders, so a
+         * container clipping its content at the edge of the line never cuts it off. The descenders it crosses break it.
+         */
+
+        text-underline-offset: 0.15em;
+
+        /* The wording is clipped across the line only, keeping the underline whatever the line height. */
+
+        & > span {
+            min-width: 0;
+            overflow-x: clip;
+            text-overflow: ellipsis;
+        }
+
+        /*
+         * A glyph standing alone carries no text for the underline to be drawn under, and its strokes are too thin for
+         * the hover colour alone to be seen, so the pointer lays the neutral hover fill of a control across it instead,
+         * rounded as the focus mark is. Wording always sits in a span of its own, so a link lacking one holds a glyph.
+         */
+
+        &:not(:has(> span)) {
+
+            border-radius: var(--skin--border-radius-025);
+
+            /*
+             * The reset hands every box the colour of the one around it, which the translucent fill would turn into a
+             * second coat on the glyph, so what the link carries is left unpainted and the fill is laid once.
+             */
+
+            & > * {
+                background-color: transparent;
+            }
+
+            /*
+             * The fill reaches past the glyph by the inset as a spread shadow, which paints only outside the box and
+             * takes no room, so the lines and rows around the link never move as the pointer crosses it.
+             */
+
+            &:hover {
+                background-color: var(--skin--background-color-hover-neutral);
+                box-shadow: 0 0 0 var(--clay-link-inset, var(--skin--spacing-025)) var(--skin--background-color-hover-neutral);
+            }
+
+            /*
+             * The focus mark the design system draws a hair off the text would close on the glyph and cut across the
+             * fill, so it is set off by the reach of the fill instead, wrapping the glyph and the fill around it alike.
+             */
+
+            &:focus-visible {
+                outline-offset: var(--clay-link-inset, var(--skin--spacing-025));
+            }
+
+        }
+
+    }
+
+    /* The quiet step reads as the text around it until the pointer adds the hover colour and the underline. */
+
+    &[look="subtle"] > a {
+
+        color: inherit;
+        text-decoration-line: none;
+
+        &:hover {
+            color: var(--skin--color-link-hover);
+            text-decoration-line: underline;
+        }
+
+    }
+
+    /* The loud step is strong in the link colour, underlined only under the pointer. */
+
+    &[look="strong"] > a {
+
+        font-weight: var(--skin--font-weight-strong);
+        text-decoration-line: none;
+
+        &:hover {
+            text-decoration-line: underline;
+        }
+
+    }
+
+    /*
+     * Links stating no look of their own take the one the area around them sets, read off the `--clay-link-look`
+     * knob through a style query: a rule has no other way to branch on a value, and the knob inherits, so every
+     * widget sits inside a container answering for it without a rule declaring one. The attribute has to be absent
+     * for the container to have a say, which is why the widget renders it only where the consumer asked for a look,
+     * and why each rule here holds itself to links carrying none, leaving a stated look to the rules above.
+     *
+     * Only the quiet and the loud steps are restated, the ordinary one being what the rules above already draw. The
+     * declarations are the ones the attribute rules carry, restated rather than shared: a style query is a conditional
+     * group and takes rules of its own, so the two forms of the same step cannot be written as one selector.
+     */
+
+    @container style(--clay-link-look: subtle) {
+
+        &:not([look]) > a {
+
+            color: inherit;
+            text-decoration-line: none;
+
+            &:hover {
+                color: var(--skin--color-link-hover);
+                text-decoration-line: underline;
+            }
+
+        }
+
+    }
+
+    @container style(--clay-link-look: strong) {
+
+        &:not([look]) > a {
+
+            font-weight: var(--skin--font-weight-strong);
+            text-decoration-line: none;
+
+            &:hover {
+                text-decoration-line: underline;
+            }
+
+        }
+
+    }
+
+    /*
+     * The current entry is marked by a heavy rule in the accent colour, as the chosen tab is, whatever the look: the
+     * ink is left as the look sets it, so the mark alone says where the reader stands. It comes after the looks, which
+     * it matches with equal specificity, so that it outlasts a look dropping the underline. Under the pointer, the mark
+     * takes the hover colour of the wording just as every other underline in a link does.
+     */
+
+    & > a[active] {
+
+        text-decoration-line: underline;
+        text-decoration-color: var(--skin--color-strong);
+        text-decoration-thickness: calc(3 * var(--skin--border-width));
+
+        &:hover {
+            text-decoration-color: currentColor;
+        }
+
+    }
+
+    /*
+     * The quiet step keeps the mark as quiet as the link, thinner but drawn at the ordinary gap below the text. Both
+     * forms of the step are restated, as for the looks above: the attribute stated on the link, and the look the area
+     * around it assigns, read through a style query that takes rules of its own and shares no selector with the other.
+     */
+
+    &[look="subtle"] > a[active] {
+        text-decoration-thickness: calc(2 * var(--skin--border-width));
+        text-underline-offset: 0.15em; /* The ordinary gap below the baseline, clear of the text it marks. */
+    }
+
+    @container style(--clay-link-look: subtle) {
+
+        &:not([look]) > a[active] {
+            text-decoration-thickness: calc(2 * var(--skin--border-width));
+            text-underline-offset: 0.15em; /* The ordinary gap below the baseline, clear of the text it marks. */
+        }
+
+    }
+
+}

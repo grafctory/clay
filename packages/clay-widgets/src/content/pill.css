@@ -1,0 +1,76 @@
+/*
+ * Copyright © 2020-2026 EC2U Alliance
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A pill sets a short label in a rounded outline, inline with the text around it, wrapping rather than clipping past its
+ * room so no part of the label is ever hidden. The look decides how loud it is, and the colour a consumer hands over
+ * through the --clay-pill-color property marks it with a dot, a tint or a fill, the look deciding which.
+ */
+
+clay-pill {
+
+    display: inline-block;
+    max-width: 100%;
+    padding: var(--skin--spacing-010) var(--skin--spacing-075);
+    border: var(--skin--border-width) var(--skin--border-style) var(--skin--border-color);
+    border-radius: var(--skin--border-radius-100);
+    overflow-wrap: anywhere;
+    vertical-align: baseline;
+    font-size: var(--skin--font-size-small);
+    font-weight: var(--skin--font-weight-strong);
+
+    /* The dot is kept concentric with the rounded start cap. */
+
+    &[color]:not([look]), &[color][look="normal"] {
+
+        padding-inline-start: var(--skin--spacing-010);
+
+        &::before {
+            content: "";
+            display: inline-block;
+            vertical-align: top;
+            width: 1cap;
+            height: 1cap;
+            margin: calc((1lh - 1cap) / 2);
+            margin-inline-end: var(--skin--spacing-050);
+            border-radius: 50%;
+            background-color: var(--clay-pill-color);
+        }
+
+    }
+
+    &[look="subtle"] {
+
+        font-weight: normal;
+
+        /* At 35% the label holds 5.3:1 on its tint for any sRGB colour, in both schemes. */
+
+        &[color] {
+            border-color: var(--clay-pill-color);
+            color: color-mix(in oklab, var(--clay-pill-color) 35%, var(--skin--color));
+            background-color: color-mix(in oklab, var(--clay-pill-color) 15%, var(--skin--background-color));
+        }
+
+    }
+
+    &[look="strong"] {
+        padding-inline: var(--skin--spacing-050);
+        border-color: transparent;
+        color: var(--skin--background-color);
+        background-color: var(--clay-pill-color, var(--skin--color));
+    }
+
+}

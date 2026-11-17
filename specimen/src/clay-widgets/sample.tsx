@@ -1,0 +1,103 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Layout samples.
+ *
+ * Presents a layout as the items it arranges and the frame it arranges them in, so what the layout decides is read off
+ * the position the items take rather than off the code.
+ *
+ * @module
+ */
+
+import { Stack } from "@metreeca/clay-widgets/stack";
+import { type ComponentChildren } from "preact";
+import "./index.css";
+
+
+/**
+ * Creates a set of items.
+ *
+ * Draws each label in an outlined stack, so the items read apart from each other and from the frame in either scheme.
+ *
+ * @param options The widget configuration
+ *
+ * @returns The items, in the order given
+ */
+export function Items({ labels }: {
+
+	/**
+	 * The label of each item, one outlined stack per label.
+	 */
+	labels: ReadonlyArray<string>
+
+}) {
+	return <>{labels.map(label =>
+
+		<Stack key={label} look="strong"><span>{label}</span></Stack>
+	)}</>;
+}
+
+/**
+ * Creates a framed sample.
+ *
+ * Sets a layout in a dashed frame, as large as what it holds or as the layout around it stretches it to, and names
+ * what the sample shows beneath it.
+ *
+ * @param options The widget configuration
+ *
+ * @returns The framed sample
+ */
+export function Frame({ label, children }: {
+
+	/**
+	 * What the sample shows.
+	 */
+	label: ComponentChildren
+
+	/**
+	 * The layout the frame holds.
+	 */
+	children: ComponentChildren
+
+}) {
+	return <figure class="frame">
+		<div>{children}</div>
+		<figcaption>{label}</figcaption>
+	</figure>;
+}
+
+
+/**
+ * Draws a sample landscape picture.
+ *
+ * Builds the picture inline, so the specimen shows real pictures without fetching anything. The colours are part of
+ * the picture rather than of the interface, so they are literals rather than design system tokens.
+ *
+ * @param sky The colour of the sky
+ * @param hills The colour of the hills
+ * @param sun The colour of the sun
+ *
+ * @returns The data URL of the picture
+ */
+export function landscape(sky: string, hills: string, sun: string): string {
+	return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="144" height="96" viewBox="0 0 240 160">
+		<rect width="240" height="160" fill="${sky}"/>
+		<circle cx="176" cy="52" r="22" fill="${sun}"/>
+		<path d="M0 112 Q60 72 120 104 T240 92 V160 H0 Z" fill="${hills}" opacity="0.7"/>
+		<path d="M0 132 Q80 104 160 128 T240 120 V160 H0 Z" fill="${hills}"/>
+	</svg>`)}`;
+}

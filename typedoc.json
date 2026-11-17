@@ -23,6 +23,18 @@
       "RangeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
       "SyntaxError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
       "TypeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError"
+    },
+    "@metreeca/core": {
+      "*": "https://metreeca.github.io/core/"
+    },
+    "@metreeca/http": {
+      "*": "https://metreeca.github.io/http/"
+    },
+    "@metreeca/skin": {
+      "*": "https://metreeca.github.io/skin/"
+    },
+    "preact": {
+      "*": "https://preactjs.com/guide/v10/api-reference/"
     }
   },
   "navigationLinks": {
@@ -46,6 +58,7 @@
       "src/**/*.{ts,tsx}"
     ],
     "exclude": [
+      "**/packages/clay-widgets/src/glyphs/icon.core.ts",
       "**/*.test.ts",
       "**/*.test.tsx",
       "**/*.test-d.ts"

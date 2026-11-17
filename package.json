@@ -1,22 +1,23 @@
 {
   "private": true,
   "version": "0.1.0",
-  "description": "Minimalist component toolkit for Preact interfaces.",
+  "description": "Minimalist UI toolkit for Preact.",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "specimen"
   ],
   "scripts": {
     "clean": "npm run clean --workspaces && ush rm dist docs node_modules",
     "prime": "npm ci",
     "setup": "npm ci && ush ln",
     "build": "npm run build --workspaces && ush rm docs && npx typedoc",
-    "check": "npm run check --workspaces",
-    "proof": "npm run build && npx wds --root-dir docs --open"
+    "check": "npm run check --workspaces --if-present",
+    "proof": "npm run build && ush ws --open docs",
+    "watch": "npm run watch -w specimen"
   },
   "devDependencies": {
     "@metreeca/rack": "^0.6.0",
-    "@web/dev-server": "^1.0.0",
     "typedoc": "^0.28.20",
     "vitest": "^5.0.5"
   },

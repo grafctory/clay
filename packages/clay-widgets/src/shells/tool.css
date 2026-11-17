@@ -1,0 +1,778 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The frame is a grid of two columns by three rows, the side column beside the main one, each a head over a body over
+ * a foot. Each column lays its parts out on the rows of the frame, so the heads of both share one row, and so do the
+ * feet, whichever holds more. A column with nothing for its foot leaves it out, and its body takes the row instead. The
+ * frame fills the height its host gives it, each body scrolling within what its bars leave.
+ */
+
+/*
+ * The knobs below tune the geometry and type of the frame. They are properties of this shell rather than design system
+ * tokens, so a single dash keeps them apart from the `--skin--` contract. An app retunes one shell by restating a knob
+ * on it, or every shell inside an element by restating it there. A knob defaulting to a design system token carries no
+ * initial value and is read with that token as fallback, so while it is left untouched it follows the theme.
+ */
+
+/* The width of the side column, room for a navigation label or a filter at the text size. */
+
+@property --clay-tool-side-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 15rem;
+}
+
+/*
+ * The widest the main column grows, gutters included. Past it, the two columns stand centred in the frame, so a wide
+ * window leaves the screen as it was rather than stretching its lines and controls apart.
+ */
+
+@property --clay-tool-main-width {
+    syntax: "*";
+    inherits: true;
+    initial-value: 60rem;
+}
+
+/* The inline gutter of the frame, keeping both columns clear of the edges of the window. */
+
+@property --clay-tool-frame-gutter {
+    syntax: "*";
+    inherits: true;
+    initial-value: 0;
+}
+
+/* The inline gutter of the side column. */
+
+@property --clay-tool-side-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The inline gutter of the main column. */
+
+@property --clay-tool-main-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The block gutter of the head row, where two columns fit; narrower heads take the edge inset of the frame. */
+
+@property --clay-tool-head-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The block gutter of the body row, where two columns fit; narrower bodies take none. */
+
+@property --clay-tool-body-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The block gutter of the foot row, and of the copy closing the main body. */
+
+@property --clay-tool-foot-gutter {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The font size of the head row. */
+
+@property --clay-tool-head-font-size {
+    syntax: "*";
+    inherits: true;
+}
+
+/* The font size of the foot row, and of the copy closing the main body. */
+
+@property --clay-tool-foot-font-size {
+    syntax: "*";
+    inherits: true;
+}
+
+/*
+ * The gutters every part reads, and the edge inset of the heads, settled once on the frame. They are registered as
+ * lengths so a gutter stated in `em` resolves against the type of the frame and is handed down as a fixed length, not
+ * against each part: a head or a foot set in a size of its own keeps the gutters of the parts beside and below it, and
+ * what the columns hold stays on one line from head to foot. They are internal, offering nothing beyond the knobs.
+ */
+
+@property --clay-tool-side-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-main-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-head-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-body-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-foot-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --clay-tool-edge-inset {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
+/*
+ * The scroll state the rule under a head is drawn from, internal as well: how far the rule has drawn in, and whether
+ * the body has anything to scroll. They are registered as numbers so the scroll position can animate them, and stand
+ * at zero wherever no animation sets them, so a head shows no rule until its body scrolls.
+ */
+
+@property --clay-tool-head-rule {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --clay-tool-scrollable {
+    syntax: "<number>";
+    inherits: false;
+    initial-value: 0;
+}
+
+
+clay-tool {
+
+    --clay-tool-side-inset: var(--clay-tool-side-gutter, var(--skin--spacing-100));
+    --clay-tool-main-inset: var(--clay-tool-main-gutter, var(--skin--spacing-100));
+    --clay-tool-head-inset: var(--clay-tool-head-gutter, var(--skin--spacing-100));
+    --clay-tool-body-inset: var(--clay-tool-body-gutter, var(--skin--spacing-100));
+    --clay-tool-foot-inset: var(--clay-tool-foot-gutter, var(--skin--spacing-100));
+    --clay-tool-edge-inset: var(--skin--spacing-100);
+
+    /* The track of the main column, capped at the width limit unless the frame goes wide. */
+
+    --clay-tool-main-track: minmax(0, var(--clay-tool-main-width));
+
+    position: relative;
+
+    display: grid;
+    grid-template-columns: var(--clay-tool-side-width) var(--clay-tool-main-track);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    justify-content: center;
+
+    padding-inline: var(--clay-tool-frame-gutter);
+
+    /* The scroll position of each body reaches the bars beside it, which are its siblings rather than its children. */
+
+    timeline-scope: --clay-tool-side-scroll, --clay-tool-main-scroll;
+
+    &[wide] {
+        --clay-tool-main-track: minmax(0, 1fr);
+    }
+
+    /* A frame with the side column tucked away takes it out of the track list, leaving no room for it. */
+
+    &[tucked] {
+        grid-template-columns: var(--clay-tool-main-track);
+    }
+
+    /*
+     * Waiting lays a veil of the page colour over the frame, washing everything toward the page by the same share, bold
+     * and large text included, where a fade would leave the heaviest text standing out. The frame ignores the input
+     * aimed inside it meanwhile, so the veil itself takes no gesture, leaving the bodies free to scroll beneath it.
+     */
+
+    &[waiting]::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: color-mix(in oklab, var(--skin--background-color) 50%, transparent);
+        backdrop-filter: blur(0.5px); /* A slight blur takes the edge off the text beneath, headings included. */
+        pointer-events: none;
+    }
+
+    /*
+     * Typing is ignored while the app is busy, so the caret is hidden at once, ahead of the veil, rather than blinking
+     * in a field that takes nothing; the focus stays put, so the field keeps its editing state. Skin defines no caret
+     * token, and a hidden caret has no colour to read from one, hence the keyword.
+     */
+
+    &[aria-busy="true"] * {
+        caret-color: transparent;
+    }
+
+    /* A locked side column fades what it holds while keeping its place, and the mark in the main head fades too. */
+
+    &[locked] > aside > *,
+    &[locked] > main > header > .mark > * {
+        opacity: var(--skin--opacity-locked);
+    }
+
+    /*
+     * Below the medium viewport two columns no longer fit: the main column takes the whole frame, and the side column
+     * stays out of view until the menu button leading the main head opens it as a drawer. From the medium viewport up
+     * the frame keeps its two columns. The bodies drop their block gutter, giving the narrow screen all their height.
+     */
+
+    @container style(--skin--viewport-medium: off) {
+        --clay-tool-body-inset: 0px;
+        grid-template-columns: var(--clay-tool-main-track);
+    }
+
+
+    /*
+     * Each column spans the three rows of the frame and lays its parts out on them, so the heads of both share one row
+     * and the feet another, while the column stays a box of its own that can carry the focus and its landmark. Each
+     * names the timeline its body scrolls, for the bars of the column to read. The columns are matched without weight,
+     * so the parts both share weigh no more than they did as bare children, and the rules of either column win.
+     */
+
+    & > :where(aside, main) {
+
+        /*
+         * The single track of a column is held to the width of the column, so a bar whose unwrapped content is wider
+         * clips it rather than widening the track past the column, which an automatic track sized to that content does.
+         */
+
+        display: grid;
+        grid-row: 1 / -1;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: subgrid;
+        min-inline-size: 0;
+        min-block-size: 0;
+
+        /*
+         * Heads and feet are rows stretching to the taller of each pair and centring what they hold vertically, so the
+         * two columns line up. What they hold keeps its own width from the start of the bar, unless it grows to fill
+         * the row, and never wraps, so a bar keeps the height of a single row whatever text it carries. Items too wide
+         * for the bar shrink, clipping what overflows them and ending clipped text with an ellipsis. The clip reaches
+         * past the item, so the focus mark and the hover fill of a link nested in it show whole, while the ellipsis
+         * still cuts text at the edge of the item. A link standing in the bar is left unclipped, cutting its own
+         * wording short, so its marks show whole even where the browser keeps the clip to the edge of the box.
+         */
+
+        & > :is(header, footer) {
+
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+
+            & > * {
+
+                min-inline-size: 0;
+
+                &:not(clay-link) {
+                    overflow: clip;
+                    overflow-clip-margin: var(--skin--spacing-050);
+                    text-overflow: ellipsis;
+                }
+
+            }
+
+            /*
+             * A button at either end of a bar, standing in it or in the row filling it, reaches into the gutter by the
+             * padding around what it carries, so its glyph or label stands on the edge the rest of the column starts
+             * from rather than inset by a padding showing only on hover. The box naming the main column counts as the
+             * bar it fills, so a row it holds is reached through it, and a turning glyph is not counted as an
+             * end. The ends are matched without weight, so a control reaching out by a measure of its own states it.
+             */
+
+            & > :is(button, clay-button):where(:first-child),
+            & > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child),
+            & > div:where(:first-child) > :not(clay-button):where(:first-child) > :is(button, clay-button):where(:first-child) {
+                margin-inline-start: calc(-1 * var(--skin--spacing-025));
+            }
+
+            & > :is(button, clay-button):where(:nth-last-child(1 of :not(.busy))),
+            & > :not(clay-button):where(:nth-last-child(1 of :not(.busy))) > :is(button, clay-button):where(:last-child),
+            & > div:where(:nth-last-child(1 of :not(.busy))) > :not(clay-button):where(:last-child) > :is(button, clay-button):where(:last-child) {
+                margin-inline-end: calc(-1 * var(--skin--spacing-025));
+            }
+
+        }
+
+        /*
+         * A rule parts each bar from the body only while content lies hidden past it, so the reader sees there is more
+         * to scroll to rather than taking the edge of the body for the end of it. The rule under a head draws in as the
+         * body starts scrolling down, and the one over a foot draws out as it nears the end. A body with nothing to
+         * scroll leaves both rules out, as does a browser unable to follow the scroll position.
+         */
+
+        & > header {
+
+            grid-row: 1;
+            padding-block: var(--clay-tool-head-inset);
+            font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
+
+            /*
+             * The rule under a head is gated on the body having anything to scroll, a state animated over a range
+             * ending past the scroll range, so the animation never finishes. Chrome (seen in 157) keeps applying a
+             * scroll-driven animation that finished past the end of its range after its timeline turns inactive, so a
+             * rule drawn in alone stays drawn once the body stops overflowing, as a section collapses in it after the
+             * reader scrolled down. The gate drops it, as its own animation is never left finished. The foot needs no
+             * gate: past the end of its range its rule is already out, and the stale state shows nothing.
+             */
+
+            border-block-end-style: var(--skin--border-style);
+            border-block-end-color: color-mix(in oklab,
+            var(--skin--border-color) calc(min(var(--clay-tool-head-rule), var(--clay-tool-scrollable)) * 100%),
+            transparent
+            );
+
+            animation: clay-tool-head-rule linear both, clay-tool-scrollable linear both;
+            animation-timeline: var(--clay-tool-scroll), var(--clay-tool-scroll);
+            animation-range: 0 var(--skin--spacing-100), 0% calc(100% + 1px);
+
+            /*
+             * Where two columns do not fit, the heads hold only the buttons of the drawer, the mark and the menu, and
+             * take the edge inset above and below in place of the head gutter, which is sized for a heading, so a
+             * retuned gutter leaves them alone. The buttons reach out by their padding, so the menu glyph stands at
+             * the edge inset, a little below the diagonal of the corner, where the eye reads it as level.
+             */
+
+            @container style(--skin--viewport-medium: off) {
+                padding-block: calc(var(--clay-tool-edge-inset) - var(--skin--spacing-025));
+            }
+
+            /*
+             * The menu and close buttons are bare glyphs shown only where the side column is a drawer, the menu button
+             * leading the main head and the close button leading the side head, clear of what the head holds. Their
+             * padding widens the target past the glyph, and the menu button keeps that distance from the title too.
+             */
+
+            & > button {
+
+                display: none;
+                flex: none;
+                padding: var(--skin--spacing-025);
+                margin-inline-end: var(--skin--spacing-025);
+                border-style: none;
+                background-color: transparent;
+                color: inherit;
+                cursor: pointer;
+
+                /*
+                 * They answer the pointer as a subtle button does, taking the neutral hover and pressed covers over
+                 * their surface, so the reader sees the whole target rather than the glyph alone.
+                 */
+
+                &:hover {
+                    background-color: var(--skin--background-color-hover-neutral);
+                }
+
+                &:active {
+                    background-color: var(--skin--background-color-pressed-neutral);
+                }
+
+            }
+
+        }
+
+        /*
+         * The body scrolls with no padding of its own, so content made sticky pins flush with the bars: the inset is
+         * carried by the boxes scrolling inside it, each column setting it on what its body holds. A column with no foot
+         * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column. Content
+         * scrolled into view, as the target of a link is, stops on the inset rather than flush with the head, so the
+         * first heading of the body lands where it stands before any scrolling.
+         */
+
+        & > div {
+
+            grid-row: 2;
+            overflow: auto;
+            scroll-padding-block-start: var(--clay-tool-body-inset);
+            scroll-timeline: var(--clay-tool-scroll) block;
+
+            &:last-child {
+                grid-row: 2 / -1;
+            }
+
+        }
+
+        & > footer {
+
+            grid-row: 3;
+            padding-block: var(--clay-tool-foot-inset);
+            font-size: var(--clay-tool-foot-font-size, var(--skin--font-size));
+
+            border-block-start-style: var(--skin--border-style);
+            border-block-start-color: transparent;
+
+            animation: clay-tool-foot-rule linear both;
+            animation-timeline: var(--clay-tool-scroll);
+            animation-range: calc(100% - var(--skin--spacing-100)) 100%;
+
+        }
+
+    }
+
+    /*
+     * The side column is a popover, which the platform places as a fixed box sized by what it holds; standing as a
+     * column it takes its track instead, until it is opened as a drawer.
+     */
+
+    & > aside {
+
+        --clay-tool-scroll: --clay-tool-side-scroll;
+
+        grid-column: 1;
+
+        position: static;
+        inset: auto;
+        inline-size: auto;
+        block-size: auto;
+        overflow: visible;
+
+        & > * {
+            padding-inline: var(--clay-tool-side-inset);
+        }
+
+        /*
+         * The meta stands apart from what leads the head, the mark or the close button of the drawer, pushed to its
+         * end. Never shrinking, it clips nothing, while the mark gives way to it where the head runs short. It takes
+         * the height of a single line of the head, what it holds centred on it and overhanging into the gutter above
+         * and below, so buttons and their padding leave the height of the head row unchanged.
+         */
+
+        & > header > .meta {
+            display: flex;
+            flex: none;
+            align-items: center;
+            block-size: 1lh;
+            margin-inline-start: auto;
+            overflow: visible;
+        }
+
+        /*
+         * The tray stands in a box of its own, carrying the inset without touching the margins of what it holds. The
+         * box fills the body and lays what it holds out as a column, so an item can grow, shrink or align with the flex
+         * properties it states, as a filter list pushing the controls after it to the bottom of the column.
+         */
+
+        & > div {
+
+            display: flex;
+            flex-direction: column;
+
+            & > div {
+                display: flex;
+                flex-direction: column;
+                flex: auto;
+                padding-block: var(--clay-tool-body-inset);
+            }
+
+        }
+
+        @container style(--skin--viewport-medium: off) {
+            &:not(:popover-open) {
+                display: none;
+            }
+        }
+
+        /*
+         * An open side column is a drawer: it covers the main column from the start edge, as wide as the side column
+         * but never wider than the window, over a blanket dimming what lies underneath. On a phone held upright, below
+         * the small viewport, it spans the whole window, as a narrower drawer would leave a sliver of the main column
+         * too thin to read. It slides in as the blanket fades in, quickly enough not to hold the reader up yet slowly
+         * enough to show where the drawer came from and where it will go; it leaves at once.
+         */
+
+        &:popover-open {
+
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr) auto;
+
+            position: fixed;
+            inset-block: 0;
+            inset-inline: 0 auto;
+            inline-size: min(100%, var(--clay-tool-side-width));
+            block-size: 100%;
+            overflow: hidden;
+
+            color: inherit;
+            background-color: var(--skin--background-color-overlay);
+
+            /*
+             * The neutral covers lose the glyph and the focus ring on an overlay, so the controls in the drawer answer
+             * the pointer with the accent states, which the design system holds legible on the overlay too.
+             */
+
+            --skin--background-color-hover-neutral: var(--skin--background-color-hover);
+            --skin--background-color-pressed-neutral: var(--skin--background-color-pressed);
+
+            translate: 0;
+            transition: translate var(--skin--duration-fast) ease-out;
+
+            @starting-style {
+                translate: -100% 0;
+            }
+
+            @container style(--skin--viewport-small: off) {
+                inline-size: 100%;
+            }
+
+            &:dir(rtl) {
+                @starting-style {
+                    translate: 100% 0;
+                }
+            }
+
+            /*
+             * The close glyph is drawn in the middle half of its square, so beyond the padding every edge button
+             * gives up it reaches out by an eighth of the glyph, short of the quarter left blank, so the width of the
+             * stroke stays inside the edge of the drawer rather than spilling past it, as the menu stroke does.
+             */
+
+            & > header > button {
+                display: inline-flex;
+                margin-inline-start: calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 8));
+            }
+
+            &::backdrop {
+
+                background-color: var(--skin--background-color-blanket);
+                transition: background-color var(--skin--duration-fast) ease-out;
+
+                @starting-style {
+                    background-color: transparent;
+                }
+
+            }
+
+        }
+
+    }
+
+    & > main {
+
+        --clay-tool-scroll: --clay-tool-main-scroll;
+
+        grid-column: -2;
+
+        /* The column takes the focus only to be announced, so it draws no ring a reader could take for a control. */
+
+        &:focus {
+            outline: none;
+        }
+
+        & > * {
+            padding-inline: var(--clay-tool-main-inset);
+        }
+
+        & > header {
+
+            position: relative;
+
+            /* The box of the mark stands aside from the layout, what it holds clipped as bar items. */
+
+            & > .mark {
+                display: contents;
+            }
+
+            /*
+             * The box of the heading lays out what it holds as a row filling the head, up to the menu. It takes the
+             * height of a single line of the head, what it holds centred on it and overhanging into the gutter above
+             * and below, so a button and its padding, shown or removed, leave the height of the head row unchanged.
+             */
+
+            & > div:not(.mark, .menu) {
+                display: flex;
+                flex: auto;
+                align-items: center;
+                block-size: 1lh;
+                overflow: visible;
+            }
+
+            & > div:not(.menu) {
+
+                & > * {
+
+                    min-inline-size: 0;
+
+                    &:not(clay-link) {
+                        overflow: clip;
+                        overflow-clip-margin: var(--skin--spacing-050);
+                        text-overflow: ellipsis;
+                    }
+
+                }
+
+            }
+
+            /*
+             * The menu stands apart from the head, pushed to its end whatever the head holds. Never shrinking, it clips
+             * nothing, so the button ending it reaches into the gutter as at the end of any bar. While a turning glyph
+             * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts. It takes
+             * the height of a single line of the head, as the heading does, its buttons overhanging into the gutter.
+             */
+
+            & > .menu {
+
+                display: flex;
+                flex: none;
+                align-items: center;
+                block-size: 1lh;
+                margin-inline-start: auto;
+                overflow: visible;
+
+                &:has(+ .busy) {
+                    visibility: hidden;
+                }
+
+            }
+
+            /*
+             * The menu glyph leaves a sixth of its square blank on either side, so beyond the padding every edge button
+             * gives up it reaches out by that blank, and its stroke stands on the edge of the main column as the close
+             * stroke does on the edge of the drawer.
+             */
+
+            @container style(--skin--viewport-medium: off) {
+                & > button:first-child {
+                    display: inline-flex;
+                    margin-inline-start: calc(-1 * (var(--skin--spacing-025) + var(--skin--scaling-100) / 6));
+                }
+            }
+
+            /*
+             * The turning glyph stands over the end of the head, above the veil and out of the flow, so the head keeps
+             * its height and layout; it takes the box an edge button takes, glyph and padding reaching into the gutter
+             * alike. It turns at the spin period of the design system whatever motion the reader asked for.
+             */
+
+            & > .busy {
+
+                position: absolute;
+                inset-block: 0;
+                inset-inline-end: calc(var(--clay-tool-main-inset) - var(--skin--spacing-025));
+                z-index: 1;
+
+                display: flex;
+                block-size: fit-content;
+                margin-block: auto;
+                padding: var(--skin--spacing-025);
+
+                color: var(--skin--color-label);
+
+                & svg {
+                    animation: clay-tool-turn var(--skin--duration-spin) linear infinite;
+                }
+
+            }
+
+        }
+
+        /*
+         * The body holds the content in a block of its own, laid out in the plain flow of a page, so floats wrap text
+         * and margins collapse. The block carries the inset of the body, as a box of the column rather than content,
+         * and is at least as tall as the body, so its height is definite and a lone item stating `block-size: 100%`
+         * fills it whole, as a map does, while longer content grows the block past the body and scrolls as usual.
+         */
+
+        & > div {
+
+            display: flex;
+            flex-direction: column;
+
+            & > div {
+                flex: 1 0 100%;
+                padding-block: var(--clay-tool-body-inset);
+            }
+
+            /*
+             * A head opening the body, where two columns do not fit, keeps the type it takes in the head and stands
+             * above the block, which keeps the full height of the body: scrolling down takes the head out of view and
+             * leaves the block filling the body, as it does where the head stands in the main head.
+             */
+
+            & > header {
+                font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
+            }
+
+            /*
+             * A copy closes the body, taking the inset and type of a foot. The block then gives up the room the copy
+             * takes, never shrinking below what it holds, so the copy rests at the bottom of a body the content is
+             * too short to fill and follows the content otherwise; an item filling the block fills it less the copy.
+             */
+
+            &:has(> footer) > div {
+                flex-shrink: 1;
+            }
+
+            & > footer {
+                padding-block: var(--clay-tool-foot-inset);
+                font-size: var(--clay-tool-foot-font-size, var(--skin--font-size));
+            }
+
+        }
+
+    }
+
+}
+
+
+@keyframes clay-tool-head-rule {
+
+    from {
+        --clay-tool-head-rule: 0;
+    }
+
+    to {
+        --clay-tool-head-rule: 1;
+    }
+
+}
+
+@keyframes clay-tool-scrollable {
+
+    from, to {
+        --clay-tool-scrollable: 1;
+    }
+
+}
+
+@keyframes clay-tool-foot-rule {
+
+    from {
+        border-block-start-color: var(--skin--border-color);
+    }
+
+    to {
+        border-block-start-color: transparent;
+    }
+
+}
+
+@keyframes clay-tool-turn {
+
+    to {
+        rotate: 1turn;
+    }
+
+}

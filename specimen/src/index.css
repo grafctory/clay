@@ -1,0 +1,103 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * The specimen dresses the frame it is laid out in as the design system lab dresses its own page: the brand in the two
+ * accents, the packages and the page settings grouped at the end of the bar, figures opening each page, and every row
+ * of samples set in a framed panel, so a widget is read against a surface of its own rather than against the prose.
+ */
+
+/* The brand reads in the subtle accent with the package name in the strong one, set in the heading face. */
+
+.brand {
+
+    font-family: var(--skin--font-family-heading);
+    font-weight: var(--skin--font-weight-strong);
+    color: var(--skin--color-subtle);
+
+    & > strong {
+        font-weight: inherit;
+        color: var(--skin--color-strong);
+    }
+
+}
+
+/*
+ * The packages stand as a row of quiet links ahead of the page settings, the one on show marked by the link itself,
+ * and step out of the bar below the medium viewport, where it has no room for them.
+ */
+
+.packages {
+
+    display: flex;
+    gap: var(--skin--spacing-100);
+    margin-inline-end: var(--skin--spacing-100);
+    font-size: var(--skin--font-size-small);
+
+    @container style(--skin--viewport-medium: off) {
+        display: none;
+    }
+
+}
+
+clay-tool {
+
+    /* The shell takes no height of its own, so every page gives it the whole of the window. */
+
+    block-size: 100dvh;
+
+    /* The home button spans the side head, its brand set at the start, so the whole bar leads back home. */
+
+    & > aside > header > clay-button {
+
+        flex: auto;
+
+        & > button {
+            justify-content: flex-start;
+        }
+
+    }
+
+    /*
+     * The heading group opening the page keeps the display size the design system gives it and starts the body, level
+     * with the first line of the outline beside it. The one opening each sample stands out from the text and keeps
+     * clear of the sample before it, so the page title alone reads as the loudest line on the page.
+     */
+
+    & hgroup:has(> h2) {
+
+        padding-top: var(--skin--spacing-100);
+
+        & > h2 {
+            font-size: var(--skin--font-size-large);
+        }
+
+    }
+
+    /*
+     * A row of samples stands in a framed panel, rounded and ruled, so the widgets it holds read against a surface of
+     * their own; the panel keeps clear of the prose before and after it, as a figure does. A row inside a field group
+     * takes the frame of the group instead, which would otherwise stand doubled around it.
+     */
+
+    & :is(.controls, .toolbar, .columns, .frames, .paths, .notes, .fields, .grid):not(fieldset *) {
+        padding: var(--skin--spacing-150);
+        border-style: var(--skin--border-style);
+        border-radius: var(--skin--border-radius-075);
+        margin-block: var(--skin--spacing-100) var(--skin--spacing-150);
+    }
+
+}

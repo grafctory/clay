@@ -1,0 +1,138 @@
+/*
+ * Copyright © 2020-2026 EC2U Alliance
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A tree node is a header, holding the toggle beside the label, above the nested nodes, which are indented
+ * under the label so the depth of each node reads off its position at a glance, however deep the tree runs.
+ */
+
+clay-tree {
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    /* An open node is set apart from the sibling below it, so its subtree reads as one block. */
+
+    &[expanded]:not(:last-child) {
+        margin-bottom: var(--skin--spacing-025);
+    }
+
+    & > header {
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: var(--skin--spacing-025);
+
+        /*
+         * The toggle keeps the quiet look of a control set in running text: no rule around it, so a column of toggles
+         * reads as marks beside the labels rather than as a stack of boxes. The fill closes tight on the glyph, with
+         * just enough air to keep the label clear of it under the pointer. The box falls short of the minimum pointer
+         * target, which the rows meet through spacing instead: the label pads each row so that no two toggles stand
+         * closer than that minimum, nor close enough to a link in a label for a press to land on the wrong one.
+         *
+         * A live toggle is drawn as a subtle button is: the glyph in the subtle accent on no fill, at 10.01:1 on the
+         * light page and 7.93:1 on the dark one, and a neutral fill under the pointer and the press, as on any surface.
+         */
+
+        & > button {
+
+            justify-content: center;
+
+            min-width: var(--skin--scaling-125);
+            min-height: var(--skin--scaling-125);
+
+            padding: var(--skin--spacing-010);
+
+            border-style: none;
+
+            /*
+             * The reset hands every box the colour of the one around it, so the glyph would take the hover fill again
+             * and stand in a darker square on it: left unpainted, it lets the fill lie once across the whole toggle.
+             */
+
+            & > * {
+                background-color: transparent;
+            }
+
+            &:enabled {
+
+                color: var(--skin--color-subtle);
+                background-color: transparent;
+
+                &:hover {
+                    background-color: var(--skin--background-color-hover-neutral);
+                }
+
+                &:active {
+                    background-color: var(--skin--background-color-pressed-neutral);
+                }
+
+            }
+
+            /*
+             * A leaf marks the room of its toggle with a quiet dot, so the column of marks runs unbroken past leaves
+             * and branches alike, and each label reads as a sibling of the labels beside it.
+             */
+
+            &:disabled::before {
+                content: "";
+                width: var(--skin--scaling-025);
+                height: var(--skin--scaling-025);
+                border-radius: 50%;
+                background-color: var(--skin--color-disabled);
+            }
+
+        }
+
+        /*
+         * The label alone sets the baseline of the node, so a tree lines up with text it is baseline-aligned with,
+         * rather than with the bottom edge of the toggle; padded to the toggle floor, it stays centred beside it.
+         */
+
+        & > span {
+
+            align-self: baseline;
+            padding-block: calc((var(--skin--scaling-150) - 1lh) / 2);
+
+            flex-grow: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+    }
+
+    /*
+     * A leaf keeps the room of a toggle so its label lines up with those of the branches beside it. A top level made
+     * of leaves alone has no branch to line up with, so its labels sit flush with the content around the tree.
+     */
+
+    :not(clay-tree > section):not(:has(> clay-tree > header > button:enabled)) > & > header > button:disabled {
+        display: none;
+    }
+
+    & > section {
+
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        margin-left: var(--skin--spacing-100);
+
+    }
+
+}

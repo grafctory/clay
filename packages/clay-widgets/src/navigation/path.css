@@ -1,0 +1,122 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/*
+ * A path lays its steps in a single row, clipping the last one with an ellipsis where the row runs out, and stacks them
+ * one per line on a phone held upright, where a row would leave the steps no room at all.
+ */
+
+clay-path {
+
+    display: block;
+
+    min-width: 0;
+
+    /*
+     * The trail assigns its links the loud look, so a step linking back up takes the colour of a strong link whatever area
+     * the trail stands in, while a link stating a look of its own keeps that one instead of the look the trail sets.
+     */
+
+    --clay-link-look: strong;
+
+    & > nav {
+
+        display: contents;
+
+        /* The list drops the markers, indent and gaps the design system gives running text. */
+
+        & > ol {
+
+            display: flex;
+            align-items: baseline;
+
+            overflow: hidden;
+
+            margin: 0;
+            padding: 0;
+
+            list-style: none;
+
+            & > li {
+
+                flex-shrink: 0;
+
+                margin: 0;
+
+                white-space: nowrap;
+
+                /*
+                 * A link keeps the weight of the plain steps beside it, whatever its look, so the trail reads at one
+                 * weight throughout. Matching the anchor as a link outweighs the looks the link sheet keys on its
+                 * attribute, so no look of the link can bring a weight of its own back into the trail.
+                 */
+
+                & > clay-link > a:any-link {
+                    font-weight: inherit;
+                }
+
+                /*
+                 * Every step ends on a separator, save plain text closing the trail, which names the current page and
+                 * leads nowhere further. Separators carry empty alternative text, so they are drawn but never
+                 * announced: each is a single right guillemet set in the text font and painted in the label colour.
+                 */
+
+                &:not(:last-child:not(:has(> clay-link)))::after {
+
+                    content: "›" / "";
+
+                    margin: 0 var(--skin--spacing-025); /* Between the two steps. */
+
+                    color: var(--skin--color-label);
+
+                }
+
+                &:last-child {
+                    flex-shrink: 1;
+                    min-width: 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+            }
+
+            /*
+             * Below the small viewport a phone held upright leaves no room for a row, so the steps stack one per line,
+             * outermost on top, each closing on its separator. A step too long for the line wraps rather than being
+             * clipped, as the whole width is its own, and carries its separator at the end of its last line.
+             */
+
+            @container style(--skin--viewport-small: off) {
+
+                flex-direction: column;
+                align-items: flex-start;
+
+                & > li {
+
+                    max-width: 100%;
+
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+
+                }
+
+            }
+
+        }
+
+    }
+
+}

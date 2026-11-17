@@ -1,0 +1,73 @@
+/*
+ * Copyright © 2026 Metreeca srl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* A label is the native one, standing wherever the layout around it places it with no box of its own. */
+
+clay-label {
+
+    display: contents;
+
+    /*
+     * The colour, the weight, the size and the gap of a label are the design system's, which lays a label out by the
+     * control it wraps: a field below its text, a box beside it. The orientation the widget states takes the place of
+     * that guess, so a label stands as told whatever it wraps, and names a control standing apart at the size told.
+     */
+
+    &[orientation="vertical"] > label {
+        flex-direction: column;
+        align-items: start;
+        font-size: var(--skin--font-size-small);
+    }
+
+    &[orientation="horizontal"] > label {
+        flex-direction: row;
+        align-items: center;
+        font-size: inherit;
+    }
+
+    /*
+     * A growing label spans the column holding it, a vertical one also taking the height the column leaves; in a
+     * strip, it takes the room left on its line instead. The field it wraps is stretched to fill that room in turn.
+     */
+
+    &[grow] > label {
+        display: flex;
+        align-self: stretch;
+    }
+
+    &[grow][orientation="vertical"] > label {
+        flex: 1 0 auto;
+    }
+
+    clay-strip > &[grow] > label {
+        flex: auto;
+        align-self: auto;
+    }
+
+    /*
+     * A label naming a control the reader has to fill in is marked by an asterisk after its text from the moment the
+     * form is shown, so the reader knows what to fill in before trying to submit. The mark is silent to assistive
+     * technology, which already announces the requirement the control states. A radio button is left unmarked, the
+     * caption of the group it belongs to being marked instead, so a single pick is never marked once per button. The
+     * mark takes the colour of a failure, the one a field still empty will be marked in when the reader submits it.
+     */
+
+    &:is([required], :has(> label :required:enabled:not([type="radio"]))) > label > span:first-of-type::after {
+        content: " *" / "";
+        color: var(--skin--color-fail);
+    }
+
+}
