@@ -314,8 +314,8 @@
   },
   "dependencies": {
     "@metreeca/clay": "^0.1.0",
-    "@metreeca/core": "^0.13.0",
-    "@metreeca/skin": "^0.1.0"
+    "@metreeca/core": "^0.14.0",
+    "@metreeca/skin": "^0.3.0"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",
