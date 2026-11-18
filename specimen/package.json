@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/specimen",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "engines": {
     "node": ">=22.22.0"
@@ -11,9 +11,9 @@
     "watch": "vite --open"
   },
   "dependencies": {
-    "@metreeca/clay": "^0.1.0",
-    "@metreeca/clay-markdown": "^0.1.0",
-    "@metreeca/clay-widgets": "^0.1.0",
+    "@metreeca/clay": "^0.2.0",
+    "@metreeca/clay-markdown": "^0.2.0",
+    "@metreeca/clay-widgets": "^0.2.0",
     "@metreeca/http": "^0.6.0",
     "@metreeca/skin": "^0.3.0",
     "lucide-preact": "^1.47.0",
