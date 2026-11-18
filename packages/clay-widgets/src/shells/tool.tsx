@@ -303,15 +303,14 @@ export function Tool({
 	const headed = split || locked;
 
 	// the switch lives in the cascade, which notifies no change, so the shell reads it again as the window is resized;
-	// a transition starts from the state the render read, so the observer is renewed with every crossing it reports
+	// a resize observer would raise loop notices as the layout switch reshapes the root it watches, and a transition
+	// starts from the state the render read, so the listener is renewed with every crossing it reports
 
 	useEffect(() => {
 
-		const observer = new ResizeObserver(() => sync());
+		window.addEventListener("resize", sync);
 
-		observer.observe(document.documentElement);
-
-		return () => observer.disconnect();
+		return () => window.removeEventListener("resize", sync);
 
 	}, [sync]);
 

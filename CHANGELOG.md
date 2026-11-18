@@ -19,6 +19,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/clay-widgets/toasts` - a toast stack takes the pointer over the whole of its glass tray, rather than
   over its controls alone, so a click falling between its toasts no longer reaches the screen beneath the glass
 
+### Fixed
+
+- `@metreeca/clay-widgets/tool` - the shell follows the viewport across the two-column threshold without flooding the
+  console with resize loop notices as the window is resized, keeping the error logs of an app free of spurious entries
+
 ## [0.1.0](https://github.com/metreeca/clay/releases/tag/v0.1.0) - 2026-11-17
 
 Initial release of a minimalist UI toolkit for Preact apps: interfaces are composed in JSX from accessible widgets that

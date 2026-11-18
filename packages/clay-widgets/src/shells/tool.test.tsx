@@ -64,7 +64,6 @@ describe("Tool", () => {
 
 	afterEach(() => {
 		viewport(false);
-		vi.unstubAllGlobals();
 		document.body.replaceChildren();
 	});
 
@@ -132,16 +131,6 @@ describe("Tool", () => {
 
 		it("follows the viewport across the threshold", async () => {
 
-			const resized: Array<() => void> = []; // test harness: collects the observer callbacks the shell registers
-
-			vi.stubGlobal("ResizeObserver", class {
-				constructor(callback: () => void) { resized.push(callback); }
-
-				observe() {}
-
-				disconnect() {}
-			});
-
 			viewport(false);
 
 			const container = document.createElement("div");
@@ -154,7 +143,7 @@ describe("Tool", () => {
 
 			const resize = (medium: boolean) => act(async () => {
 				viewport(medium);
-				resized.forEach(callback => callback());
+				window.dispatchEvent(new Event("resize"));
 			});
 
 			await resize(true);
