@@ -16,6 +16,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `@metreeca/clay/board` - a problem with no usable explanation or summary is worded by its HTTP status or by an
   excerpt of its machine-readable details, rather than as a bare `Unexpected error`, giving the reader a clue to go on
+- `@metreeca/clay-widgets/toasts` - a toast stack takes the pointer over the whole of its glass tray, rather than
+  over its controls alone, so a click falling between its toasts no longer reaches the screen beneath the glass
 
 ## [0.1.0](https://github.com/metreeca/clay/releases/tag/v0.1.0) - 2026-11-17
 

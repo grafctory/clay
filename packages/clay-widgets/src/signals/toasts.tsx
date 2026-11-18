@@ -43,8 +43,8 @@ import "./toasts.css";
  * its own once it is up, while the post stays on the board for any other reader. Any other toast stays until whoever
  * put its post up clears it, or until the reader deals with it: by dismissing it through the quiet control beside the
  * message, hinted as it is pointed at, or by following the message of an actionable post where an `onAction` handler
- * is given. Either way the post is cleared from the board for every reader. Away from those controls the stack answers
- * no gesture, leaving the pointer to the screen beneath it, so the toasts never stand in the way of what they cover.
+ * is given. Either way the post is cleared from the board for every reader. The stack takes the pointer over the whole
+ * of its glass, so a click falling between its toasts never lands on what lies beneath it.
  *
  * Every toast takes the same width, so the stack reads as one column, a long message wrapping rather than widening
  * its toast; the width is retuned through the `--clay-toasts-width` custom property, `24rem` unless restated, and
