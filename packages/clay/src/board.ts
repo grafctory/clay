@@ -36,6 +36,7 @@
 
 import { assert } from "@metreeca/core";
 import { some, type Some } from "@metreeca/core/arrays";
+import { clip } from "@metreeca/core/strings";
 import { equals, immutable } from "@metreeca/core/values";
 import { isProblem, type Problem, toProblem } from "@metreeca/http/success";
 import { type ComponentChildren, createContext, createElement } from "preact";
@@ -43,9 +44,17 @@ import { useContext, useEffect, useState } from "preact/hooks";
 
 
 /**
+ * The longest excerpt of machine-readable details quoted in a message.
+ */
+const ExcerptLength = 100;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
  * The board seen outside any {@link Board}, posting nowhere, logging raised issues to the console and clearing nothing.
  */
-const nowhere: Board = {
+const nowhere: Board = immutable({
 
 	post: toPost,
 
@@ -59,7 +68,7 @@ const nowhere: Board = {
 
 	clear: () => {}
 
-};
+});
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -96,13 +105,18 @@ export interface Board {
 	 * updates its post without moving it ahead of the others; any other post is put up last, dropping the oldest
 	 * beyond the limit. A post standing as given changes nothing.
 	 *
-	 * @param post The post to put up, whose identity and status may be left out: a post with no `instance` is put up
-	 * anew as a `urn:uuid:` URI, and one with no `status` has nothing to report beyond its message
+	 * A post telling of a failure the source caught may leave its message out and carry the problem details alone. The
+	 * message is then worded from the problem: its explanation, failing that its summary, and failing both a standing
+	 * English hint at what went wrong. A failure thus reads alike whether a source posted or raised it.
+	 *
+	 * @param post The post to put up, whose identity and status may be left out, and its message as well where it
+	 * carries a problem: a post with no `instance` is put up anew as a `urn:uuid:` URI, one with no `status` passes no
+	 * verdict beyond its message, and one with no `message` is worded from its problem
 	 *
 	 * @returns The post as put up, identity included, so a source posts it again to tell how its operation moved on
 	 * and clears it once it has nothing more to tell
 	 */
-	post(post: Partial<Post> & Pick<Post, "message">): Post;
+	post(post: Partial<Post> & ({ message: string } | { problem: Problem })): Post;
 
 	/**
 	 * Raises an unexpected issue.
@@ -129,8 +143,8 @@ export interface Board {
 	 * left to whatever the interface threw on its own account; a client lacking that middleware has its transport
 	 * failures stated as defects, since they reach the board as plain errors rather than as problem details.
 	 *
-	 * The post carries the explanation of the problem as its message, or failing that its summary, and a standing
-	 * English wording where the problem states neither.
+	 * The message of the post is worded from its problem as {@link Board.post | post} words a post with no message of
+	 * its own, so a raised issue reads exactly as the same failure would read once caught and posted by its source.
 	 *
 	 * Every issue counts as a new one: raising the same issue twice leaves two posts, each with an `instance` of its
 	 * own, because two failed attempts are not one.
@@ -178,7 +192,7 @@ export interface Post {
 	readonly status: Status;
 
 	/**
-	 * The message the post carries.
+	 * The message the post carries, worded from its {@link Post.problem | problem} where the source gave none.
 	 */
 	readonly message: string;
 
@@ -327,18 +341,22 @@ export function usePosts(): readonly Post[] {
  *
  * @param post The post as given to {@link Board.post}
  *
- * @returns `post` with a fresh `urn:uuid:` identity if it carries none, and `normal` status if it states none
+ * @returns `post` with a fresh `urn:uuid:` identity if it carries none, `normal` status if it states none, and its
+ * problem worded by {@link toMessage} as its message if it carries no message of its own
  */
 function toPost({
 
 	instance = `urn:uuid:${crypto.randomUUID()}`,
 	status = "normal",
+	message,
 
 	...rest
 
-}: Partial<Post> & Pick<Post, "message">): Post {
+}: Parameters<Board["post"]>[0]): Post {
 
-	return immutable({ ...rest, instance, status });
+	// the signature rules out a post stating neither, but a caller unchecked by it still gets a wording
+
+	return immutable({ ...rest, instance, status, message: message ?? toMessage(rest.problem ?? {}) });
 
 }
 
@@ -347,20 +365,38 @@ function toPost({
  *
  * @param issue The issue as given to {@link Board.raise}
  *
- * @returns A post with a fresh identity, carrying `issue` as problem details and their explanation, or failing that
- * their summary, as its message: a `failure` if `issue` already was problem details, and a `defect` otherwise
+ * @returns A post with a fresh identity, carrying `issue` as problem details worded as its message: a `failure` if
+ * `issue` already was problem details, and a `defect` if it was anything else the interface threw
  */
 function toFailure(issue: unknown): Post {
 
-	const problem = toProblem(issue);
-
 	return toPost({
 		status: isProblem(issue) ? "failure" : "defect",
-		message: problem.detail ?? problem.title ?? "Unexpected error",
-		problem
+		problem: toProblem(issue)
 	});
 
 }
+
+/**
+ * Words a problem as the message of a post telling of it.
+ *
+ * @param problem The problem to word
+ *
+ * @returns The explanation of `problem`, or failing that its summary, blank values counting as missing; failing both,
+ * a standing English wording naming its HTTP status or, where no server assigned one, quoting an excerpt of the
+ * machine-readable details it carries, so the reader gets a hint of what went wrong even then
+ */
+function toMessage({ status, title, detail, report }: Problem): string {
+
+	const explanation = [detail, title].find(text => text?.trim());
+
+	return explanation ? explanation
+		: status ? `Request failed with HTTP status ${status}`
+			: report !== undefined ? `Unexpected error: ${clip(JSON.stringify(report), ExcerptLength)}`
+				: "Unexpected error";
+
+}
+
 
 /**
  * Raises the issues the page raises on its own account.

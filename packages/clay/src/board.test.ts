@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import type { Problem } from "@metreeca/http/success";
 import { createElement, Fragment, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -364,6 +365,60 @@ describe("useBoard()", () => {
 
 		});
 
+		describe("with a problem and no message", () => {
+
+			function message(problem: Problem): string | undefined {
+
+				mount();
+
+				return post({ status: "failure", problem })[0]?.message;
+
+			}
+
+			it("should keep the message given over the problem", async () => {
+
+				mount();
+
+				expect(post({ message: "Failed", problem: { status: 500, detail: "broken" } })[0]?.message)
+					.toBe("Failed");
+
+			});
+
+			it("should word the problem by its explanation", async () => {
+				expect(message({ status: 404, title: "Not Found", detail: "unknown resource" })).toBe("unknown resource");
+			});
+
+			it("should word the problem by its summary, failing an explanation", async () => {
+				expect(message({ status: 404, title: "Not Found" })).toBe("Not Found");
+			});
+
+			it("should take a blank explanation or summary as missing", async () => {
+				expect(message({ status: 404, title: "Not Found", detail: " " })).toBe("Not Found");
+				expect(message({ status: 404, title: "", detail: "" })).toContain("404");
+			});
+
+			it("should name the status, failing explanation and summary", async () => {
+				expect(message({ status: 500 })).toContain("500");
+			});
+
+			it("should quote the machine-readable details where no server assigned a status", async () => {
+				expect(message({ status: 0, report: { code: 42 } })).toContain(`{"code":42}`);
+			});
+
+			it("should quote an excerpt of lengthy machine-readable details", async () => {
+
+				const report = { trace: "x".repeat(1000) };
+
+				expect(message({ status: 0, report })?.length).toBeLessThan(JSON.stringify(report).length);
+
+			});
+
+			it("should word a problem stating nothing", async () => {
+				expect(message({})).toMatch(/\S/);
+			});
+
+		});
+
 	});
 
 	describe("raise", () => {
@@ -469,6 +524,17 @@ describe("useBoard()", () => {
 			raise({ status: 500 });
 
 			expect(standing()[0]?.message).not.toBe("");
+
+		});
+
+		it("should word the message as a source posting the problem would", async () => {
+
+			mount();
+
+			const raised = raise({ status: 503 }, { code: 42 });
+			const posted = post({ problem: { status: 503 } }, { problem: { status: 0, report: { code: 42 } } });
+
+			expect(raised.map(({ message }) => message)).toEqual(posted.map(({ message }) => message));
 
 		});
 

@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.2.0](https://github.com/metreeca/clay/compare/v0.1.0...HEAD)
 
+### Added
+
+- `@metreeca/clay/board` - a source posting a failure it caught may hand over the problem details alone, its message
+  then worded from the problem just as a raised issue is, so posted and raised failures read alike to the user
+
+### Changed
+
+- `@metreeca/clay/board` - a problem with no usable explanation or summary is worded by its HTTP status or by an
+  excerpt of its machine-readable details, rather than as a bare `Unexpected error`, giving the reader a clue to go on
+
 ## [0.1.0](https://github.com/metreeca/clay/releases/tag/v0.1.0) - 2026-11-17
 
 Initial release of a minimalist UI toolkit for Preact apps: interfaces are composed in JSX from accessible widgets that
