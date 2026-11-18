@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/clay/compare/v0.2.0...HEAD)
 
+### Fixed
+
+- `@metreeca/clay-widgets/icon` - glyphs keep their text-height sizing in production builds of consuming apps, where
+  they were drawn at the 24px Lucide default because the bundler dropped the stylesheet sizing them to their text
+
 ## [0.2.0](https://github.com/metreeca/clay/compare/v0.1.0...v0.2.0) - 2026-11-18
 
 ### Added

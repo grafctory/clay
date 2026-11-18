@@ -19,6 +19,14 @@ import { describe, expect, it } from "vitest";
 import { classes, isContent, keys } from "./index.js";
 
 
+const [manifest] = Object.values(import.meta.glob<{
+
+	readonly sideEffects: readonly string[];
+	readonly exports: Readonly<Record<string, null | { readonly default: string }>>;
+
+}>("../package.json", { eager: true, import: "default" }));
+
+
 describe("isContent", () => {
 
 	it("takes content that renders nothing as an empty slot", () => {
@@ -124,6 +132,22 @@ describe("keys", () => {
 		keys({ Enter: () => false })(key);
 
 		expect(key.prevented()).toBe(true);
+
+	});
+
+});
+
+describe("sideEffects", () => {
+
+	// a path matching no shipped module goes unnoticed until a consumer's production build drops its stylesheet
+
+	it("names only modules the package publishes", () => {
+
+		const published = Object.values(manifest.exports).flatMap(target => target ? [target.default] : []);
+
+		const modules = manifest.sideEffects.filter(path => !path.includes("*"));
+
+		expect(published).toEqual(expect.arrayContaining(modules));
 
 	});
 

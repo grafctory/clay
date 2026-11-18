@@ -26,7 +26,7 @@
   "type": "module",
   "sideEffects": [
     "*.css",
-    "./dist/icon.js"
+    "./dist/glyphs/icon.js"
   ],
   "exports": {
     ".": {
