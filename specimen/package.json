@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/specimen",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "type": "module",
   "engines": {
     "node": ">=22.22.0"
