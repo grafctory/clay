@@ -230,7 +230,9 @@ A sample added to a page takes the place these rules give it, never the end of i
 # Version Management
 
 All workspace packages share the root `package.json` version. Beyond the `version` fields the release flow already
-cascades, update the internal `@metreeca/clay*` dependency ranges in every `packages/**/package.json` to match.
+cascades, update the internal `@metreeca/clay*` dependency ranges in every `packages/**/package.json` to match. The
+specimen, a private workspace, takes the packages it shows through `file:` links rather than ranges, so it follows every
+version without being touched, and a newly cut line never leaves it asking the registry for an unpublished release.
 
 When adding, removing, or renaming packages, update the package table in the root `README.md` Installation section to
 match.
