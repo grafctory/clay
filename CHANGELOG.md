@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/metreeca/clay/compare/v0.2.1...HEAD)
 
+### Changed
+
+- **Breaking**: `@metreeca/clay-widgets` takes `@metreeca/clay` as a peer dependency, so that an app installs a single
+  copy of it and every widget reads the router, client and status the app sets up; apps declare `@metreeca/clay`
+  among their own dependencies, as they already do to set up the contexts the widgets read
+
 ## [0.2.1](https://github.com/metreeca/clay/compare/v0.2.0...v0.2.1) - 2026-11-18
 
 ### Fixed

@@ -313,11 +313,11 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/clay": "^0.2.1",
     "@metreeca/core": "^0.14.0",
     "@metreeca/skin": "^0.3.0"
   },
   "devDependencies": {
+    "@metreeca/clay": "^0.2.1",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8",
@@ -326,6 +326,7 @@
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
+    "@metreeca/clay": "^0.2.1",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"
   }
