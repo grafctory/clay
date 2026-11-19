@@ -24,8 +24,8 @@
  */
 
 import { useModel } from "@metreeca/clay/model";
-import type { Optional } from "@metreeca/core";
 import { createState } from "@metreeca/core/state";
+import { equals } from "@metreeca/core/values";
 import { skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
 import { useEffect, useId } from "preact/hooks";
@@ -90,6 +90,8 @@ const Ignored = Object.fromEntries([
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
  * The main body then opens at its top, or on the element a link targets, set below the head at the gutter of the
  * body, as it stands before any scrolling. The side body keeps its place, so a reader never loses their position in it.
+ * A screen replacing its content without a landing, as a catalogue does on a change of filters, states it through the
+ * `gist`, and the main body opens at its top again, so the reader never lands halfway down a list they have not read.
  *
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
@@ -117,6 +119,8 @@ export function Tool({
 
 	locked = false,
 	tucked = false,
+
+	gist,
 
 	mark,
 	meta,
@@ -169,6 +173,18 @@ export function Tool({
 
 
 	/**
+	 * What the main body shows, as the app tells one content from another, such as the criteria a catalogue draws its
+	 * results from rather than the results themselves. A change of gist brings the main body back to its top, as a
+	 * landing does, while the side body keeps its place. Gists are compared by content, so a gist rebuilt with equal
+	 * values moves nothing, and neither does loading more results under the same criteria. A gist must be plain data
+	 * free of cycles: objects and arrays are compared member by member, and any other value by identity. The gist the
+	 * shell is first shown with moves nothing, as the screen has just landed, but a gist set later where none stood
+	 * counts as a change. Without a gist, the main body keeps its place until the router lands another screen.
+	 */
+	gist?: unknown
+
+
+	/**
 	 * The identity of the app, such as its logo and name linking to its home, in the head of the side column. On a
 	 * viewport too narrow for two columns it moves to the main head instead, so the app stays named while the drawer is
 	 * closed. There it stands next to the menu button, or leads the head while the side column is locked, fading and
@@ -198,10 +214,10 @@ export function Tool({
 
 
 	/**
-	 * The heading of the screen, such as its title, in the head of the main column. Its items stand in a row filling the
-	 * head up to the `menu` within a single line, so showing or removing a button never changes the height of the head.
-	 * On a viewport too narrow for two columns it opens the main body instead, scrolling away with the content rather
-	 * than standing over it, so the narrow screen gives its whole height to the content once the reader starts
+	 * The heading of the screen, such as its title, in the head of the main column. Its items stand in a row filling
+	 * the head up to the `menu` within a single line, so showing or removing a button never changes the height of the
+	 * head. On a viewport too narrow for two columns it opens the main body instead, scrolling away with the content
+	 * rather than standing over it, so the narrow screen gives its whole height to the content once the reader starts
 	 * scrolling. While the side column is locked it keeps its place in the main head whatever the viewport.
 	 */
 	head?: ComponentChildren
@@ -245,7 +261,7 @@ export function Tool({
 
 	const title = head ? `${id}-title` : undefined;
 
-	const column = `${id}-main`;
+	const body = `${id}-body`;
 
 	const { waiting, settle } = useModel(() => createState<Waiting>({
 
@@ -277,6 +293,27 @@ export function Tool({
 		}
 
 	}, [locked]);
+
+	const { changes, track } = useModel(() => createState<Content>({
+
+		gist,
+		changes: 0,
+
+		track(gist: unknown) {
+			return equals(gist, this.gist) ? {} : { gist, changes: this.changes+1 };
+		}
+
+	}));
+
+	// a gist built anew on every render reaches the model each time, which counts only a change of content
+
+	useEffect(() => {
+
+		if ( track(gist).changes > changes ) {
+			document.getElementById(body)?.scrollTo(0, 0);
+		}
+
+	}, [gist]);
 
 	const { open, toggle } = useModel(() => createState<Drawer>({
 
@@ -356,9 +393,10 @@ export function Tool({
         >
 
             <header>
-				{split ? mark : <button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
-                    <Icon.Close/>
-                </button>}
+				{split ? mark :
+					<button type="button" popovertarget={side} popovertargetaction="hide" aria-label="Close menu">
+						<Icon.Close/>
+					</button>}
 				{meta && <div class="meta">{meta}</div>}
             </header>
 
@@ -379,7 +417,7 @@ export function Tool({
 		 * below it, unless a locked side column keeps it in the main head, apart from the menu as on a wide viewport.
 		 */}
 
-		<main id={column} aria-labelledby={title} tabIndex={-1} inert={open}>
+		<main id={`${id}-main`} aria-labelledby={title} tabIndex={-1} inert={open}>
 
 			<header>
 				{!tucked && !locked && <button type="button" popovertarget={side} aria-label="Open menu">
@@ -395,11 +433,11 @@ export function Tool({
 				 */}
 
 				{menu && <div class="menu">{menu}</div>}
-				{waiting && <span class="busy" inert><Icon.Reload/></span>}
+				{waiting && <span class="busy" inert><Icon.Busy/></span>}
 
 			</header>
 
-			<div tabIndex={0}>
+			<div id={body} tabIndex={0}>
 				{!headed && head && <header id={title}>{head}</header>}
 				<div>{children}</div>
 				{copy && <footer>{copy}</footer>}
@@ -441,6 +479,32 @@ interface Waiting {
 	 * @returns The waiting state as it now stands
 	 */
 	settle(waiting: boolean): Waiting;
+
+}
+
+/**
+ * What the main body shows, as told by its gist.
+ */
+interface Content {
+
+	/**
+	 * The gist of what the main body shows.
+	 */
+	readonly gist: unknown;
+
+	/**
+	 * How many times the gist has changed since the shell was first shown.
+	 */
+	readonly changes: number;
+
+	/**
+	 * Records the gist of what the main body now shows.
+	 *
+	 * @param gist The gist the shell is now shown with
+	 *
+	 * @returns The content as it now stands, unchanged if `gist` equals the last one by content
+	 */
+	track(gist: unknown): Content;
 
 }
 
@@ -497,7 +561,6 @@ function medium(): boolean {
 	return getComputedStyle(document.documentElement).getPropertyValue(skin.viewportMedium).trim() === "on";
 }
 
-
 /**
  * Tells whether a toggle of the side column left it open.
  *
@@ -508,7 +571,6 @@ function medium(): boolean {
 function opened(event: TargetedEvent<HTMLElement>): boolean {
 	return "newState" in event && event.newState === "open";
 }
-
 
 /**
  * Moves the focus to the close button as the drawer opens, so a keyboard lands inside what now covers the main column;
@@ -522,35 +584,20 @@ function reveal(event: TargetedEvent<HTMLElement>): void {
 	}
 }
 
-
-/**
- * Retrieves the control holding the focus.
- *
- * @returns The focused element, if any element other than the page itself holds the focus
- */
-function focused(): Optional<HTMLElement> {
-
-	const element = document.activeElement;
-
-	return element instanceof HTMLElement && element !== document.body ? element : undefined;
-
-}
-
 /**
  * Takes the focus off the control holding it inside a column.
  *
  * @param column The column whose control is to lose the focus
  */
-function release(column: Optional<HTMLElement | null>): void {
+function release(column: HTMLElement | null): void {
 
-	const control = focused();
+	const control = document.activeElement;
 
-	if ( control && column?.contains(control) ) {
+	if ( control instanceof HTMLElement && column?.contains(control) ) {
 		control.blur();
 	}
 
 }
-
 
 /**
  * Cancels a gesture aimed inside a busy shell, stopping its default action and the handlers of the control it targets.
@@ -561,7 +608,6 @@ function ignore(event: Event): void {
 	event.preventDefault();
 	event.stopPropagation();
 }
-
 
 /**
  * Closes the drawer once a link inside it is followed, so the reader lands on the destination rather than on the

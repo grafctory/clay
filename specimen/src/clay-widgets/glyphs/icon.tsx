@@ -99,13 +99,15 @@ const areas: ReadonlyArray<Area> = [
 		["Create", Icon.Create],
 		["Update", Icon.Update],
 		["Save", Icon.Save],
-		["Delete", Icon.Delete]
+		["Delete", Icon.Delete],
+		["Reload", Icon.Reload]
 	]],
 
 	["Confirmation", [
 		["Accept", Icon.Accept],
 		["Cancel", Icon.Cancel],
-		["Close", Icon.Close]
+		["Close", Icon.Close],
+		["Dismiss", Icon.Dismiss]
 	]],
 
 	["Items", [
@@ -116,6 +118,10 @@ const areas: ReadonlyArray<Area> = [
 	["Modes", [
 		["Menu", Icon.Menu],
 		["Done", Icon.Done]
+	]],
+
+	["Progress", [
+		["Busy", Icon.Busy]
 	]],
 
 	["Notices", [
@@ -129,6 +135,7 @@ const areas: ReadonlyArray<Area> = [
 		["Unauthorized", Icon.Unauthorized],
 		["Forbidden", Icon.Forbidden],
 		["NotFound", Icon.NotFound],
+		["Gone", Icon.Gone],
 		["Error", Icon.Error]
 	]]
 

@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.4.0](https://github.com/metreeca/clay/compare/v0.3.0...HEAD)
 
+### Added
+
+- `@metreeca/clay-widgets/tool` - a screen replacing its content without a landing, as a catalogue does on a change
+  of filters, states it through `gist`, and the main body returns to its top, so the reader never lands mid-list
+- `@metreeca/clay-widgets/icon` - a `Busy` role marks the app working on what the reader asked for, and the Tool shell
+  turns it while waiting, so a waiting glyph no longer borrows the look of the `Reload` action
+
 ## [0.3.0](https://github.com/metreeca/clay/compare/v0.2.1...v0.3.0) - 2026-11-19
 
 ### Changed

@@ -111,6 +111,8 @@
  * | **Modes**        | entering and leaving a way of working                        |
  * | `Menu`           | opens what a screen keeps out of the way until asked         |
  * | `Done`           | leaves a mode, whatever it was entered for                   |
+ * | **Progress**     | what the app is still working on                             |
+ * | `Busy`           | stands while the app works on what the reader asked for      |
  * | **Notices**      | what the app has to say unprompted                           |
  * | `About`          | tells the reader about the app itself                        |
  * | `Info`           | carries an aside the reader may skip                         |

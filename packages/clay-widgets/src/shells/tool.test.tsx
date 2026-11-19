@@ -623,6 +623,129 @@ describe("Tool", () => {
 	});
 
 
+	describe("gist", () => {
+
+		const container = () => {
+
+			const container = document.createElement("div");
+
+			document.body.append(container);
+
+			return container;
+
+		};
+
+		// the shell takes the gist in after rendering and settles on a later task, which the harness waits out
+
+		const show = async (root: HTMLElement, gist?: unknown) => {
+			await act(async () => { render(<Tool gist={gist} tray={<p>tray</p>}><p>content</p></Tool>, root); });
+			await act(async () => { await new Promise(resolve => setTimeout(resolve)); });
+		};
+
+		const main = (root: HTMLElement) => root.querySelector<HTMLElement>("clay-tool > main > div")!;
+		const side = (root: HTMLElement) => root.querySelector<HTMLElement>("clay-tool > aside > div")!;
+
+		const scrolled = (root: HTMLElement) => {
+			main(root).scrollTop = 100;
+			side(root).scrollTop = 100;
+		};
+
+		it("brings the main body back to its top as the gist changes", async () => {
+
+			const root = container();
+
+			await show(root, { query: "first" });
+
+			scrolled(root);
+
+			await show(root, { query: "second" });
+
+			expect(main(root).scrollTop).toBe(0);
+
+		});
+
+		it("leaves the side body in place as the gist changes", async () => {
+
+			const root = container();
+
+			await show(root, { query: "first" });
+
+			scrolled(root);
+
+			await show(root, { query: "second" });
+
+			expect(side(root).scrollTop).toBe(100);
+
+		});
+
+		it("leaves the main body in place for a gist built anew with equal content", async () => {
+
+			const root = container();
+
+			await show(root, { query: "first", tags: ["a", "b"] });
+
+			scrolled(root);
+
+			await show(root, { query: "first", tags: ["a", "b"] });
+
+			expect(main(root).scrollTop).toBe(100);
+
+		});
+
+		it("leaves the main body in place for the gist the shell is first shown with", async () => {
+
+			// content placing the reader as it mounts, as a landing on a fragment or a restored position does
+
+			const Placed = () => {
+
+				useEffect(() => {
+					document.getElementById("placed")!.closest<HTMLElement>("clay-tool > main > div")!.scrollTop = 100;
+				}, []);
+
+				return <p id="placed">content</p>;
+
+			};
+
+			const root = container();
+
+			await act(async () => { render(<Tool gist={{ query: "first" }}><Placed/></Tool>, root); });
+			await act(async () => { await new Promise(resolve => setTimeout(resolve)); });
+
+			expect(main(root).scrollTop).toBe(100);
+
+		});
+
+		it("brings the main body back to its top as a gist is set where none was before", async () => {
+
+			const root = container();
+
+			await show(root);
+
+			scrolled(root);
+
+			await show(root, { query: "first" });
+
+			expect(main(root).scrollTop).toBe(0);
+
+		});
+
+		it("leaves the main body in place without a gist", async () => {
+
+			const root = container();
+
+			await show(root);
+
+			scrolled(root);
+
+			await show(root);
+
+			expect(main(root).scrollTop).toBe(100);
+
+		});
+
+	});
+
+
 	describe("drawer", () => {
 
 		it("offers the side column as a popover on narrow viewports", async () => {

@@ -67,6 +67,8 @@ export { Ellipsis as More } from "lucide-preact";
 export { Menu } from "lucide-preact";
 export { X as Done } from "lucide-preact";
 
+export { RefreshCw as Busy } from "lucide-preact";
+
 export { Heart as About } from "lucide-preact";
 export { Info } from "lucide-preact";
 export { AlertTriangle as Alert } from "lucide-preact";
