@@ -16,7 +16,7 @@
 
 import { Fetch, useFetch } from "@metreeca/clay/fetch";
 import { type JSX, render } from "preact";
-import { useEffect } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { act } from "preact/test-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Tool } from "./tool.js";
@@ -617,6 +617,40 @@ describe("Tool", () => {
 
 			expect(tool.querySelector<HTMLElement>(":scope > aside > div")?.tabIndex).toBe(0);
 			expect(tool.querySelector<HTMLElement>(":scope > main > div")?.tabIndex).toBe(0);
+
+		});
+
+		it("keeps the id of the main body across mounts, so the router restores its position on going back", async () => {
+
+			const container = document.createElement("div");
+
+			document.body.append(container);
+
+			// the shell comes and goes inside a root rendered once, as a view does under the router
+
+			const toggles: ((shown: boolean) => void)[] = [];
+
+			function Screen() {
+
+				const [shown, show] = useState(true);
+
+				toggles.push(show);
+
+				return shown ? <Tool>content</Tool> : <section/>;
+
+			}
+
+			const id = () => container.querySelector("clay-tool > main > div")?.id;
+
+			await act(async () => { render(<Screen/>, container); });
+
+			const first = id();
+
+			await act(async () => toggles[0]?.(false));
+			await act(async () => toggles[0]?.(true));
+
+			expect(first).toBeTruthy();
+			expect(id()).toBe(first);
 
 		});
 

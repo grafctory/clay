@@ -302,6 +302,276 @@ describe("Router", () => {
 
 		});
 
+		describe("traversal", () => {
+
+			/**
+			 * A stand-in for the Navigation API, which happy-dom lacks: the router reads only the key of the current
+			 * entry and the event announcing that the entry is about to be left for another one, whatever the cause.
+			 */
+			const navigation = Object.assign(new EventTarget(), { currentEntry: { key: "" } });
+
+			const routes: Routing = {
+				"/": createElement("section", {},
+					createElement("div", { id: "list" }, createElement("a", { href: "/other" }, "link"))
+				),
+				"/plain": createElement("section", {},
+					createElement("div", {}, createElement("a", { href: "/other" }, "link"))
+				),
+				"/other": createElement("a", { href: "/" }, "home")
+			};
+
+			beforeEach(() => {
+				sessionStorage.clear();
+				navigation.currentEntry = { key: "first" };
+				vi.stubGlobal("navigation", navigation);
+				vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+			});
+
+			afterEach(() => {
+				vi.unstubAllGlobals();
+				vi.useRealTimers();
+			});
+
+
+			function frame(): void {
+				shell(createElement("main", {}, createElement(Routes, { children: routes })));
+			}
+
+			function scroll(selector: string, top: number): void {
+				document.querySelector(selector)?.scrollTo(0, top);
+			}
+
+			function offset(selector: string): number | undefined {
+				return document.querySelector(selector)?.scrollTop;
+			}
+
+			async function leave(key: string, action: () => void): Promise<void> {
+				await act(async () => {
+					navigation.dispatchEvent(new Event("navigate"));
+					navigation.currentEntry = { key };
+					action();
+				});
+			}
+
+			async function follow(key: string): Promise<void> {
+				await leave(key, () => document.querySelector("a")?.click());
+			}
+
+			async function traverse(key: string, route: string): Promise<void> {
+				await leave(key, () => {
+					history.replaceState(null, "", route);
+					window.dispatchEvent(new PopStateEvent("popstate"));
+				});
+			}
+
+			/**
+			 * Lets boxes scroll no further than the content loaded so far, as browsers do.
+			 */
+			function clamp(limit: () => number): void {
+				vi.spyOn(Element.prototype, "scrollTo").mockImplementation(function (this: Element, ...args: unknown[]) {
+					this.scrollTop = Math.min(Number(args[1]), limit());
+				});
+			}
+
+
+			it("should restore the position of a box with an id when going back", async () => {
+
+				frame();
+				scroll("#list", 120);
+
+				await follow("second");
+				await traverse("first", "/");
+
+				expect(offset("#list")).toBe(120);
+
+			});
+
+			it("should restore the position across a replacement issued as the view lands on going back", async () => {
+
+				frame();
+				scroll("#list", 120);
+
+				await follow("second");
+
+				await leave("first", () => {
+					history.replaceState(null, "", "/");
+					window.dispatchEvent(new PopStateEvent("popstate"));
+					navigation.dispatchEvent(Object.assign(new Event("navigate"), { navigationType: "replace" }));
+				});
+
+				expect(offset("#list")).toBe(120);
+
+			});
+
+			it("should restore the position of the window when going back", async () => {
+
+				frame();
+
+				vi.spyOn(window, "scrollY", "get").mockReturnValue(300);
+
+				await follow("second");
+
+				const restore = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
+				await traverse("first", "/");
+
+				expect(restore).toHaveBeenCalledWith(0, 300);
+
+			});
+
+			it("should restore the position when going forward", async () => {
+
+				history.replaceState(null, "", "/other");
+
+				frame();
+
+				await act(async () => document.querySelector("a")?.click()); // to "/" as a new entry
+
+				navigation.currentEntry = { key: "second" };
+
+				scroll("#list", 80);
+
+				await traverse("first", "/other");
+				await traverse("second", "/");
+
+				expect(offset("#list")).toBe(80);
+
+			});
+
+			it("should open a box without an id at its top when going back", async () => {
+
+				history.replaceState(null, "", "/plain");
+
+				frame();
+				scroll("section > div", 120);
+
+				await follow("second");
+				await traverse("first", "/plain");
+
+				expect(offset("section > div")).toBe(0);
+
+			});
+
+			it("should land a followed link at the top of a route left scrolled", async () => {
+
+				frame();
+				scroll("#list", 120);
+
+				await follow("second");
+				await follow("third");
+
+				expect(offset("#list")).toBe(0);
+
+			});
+
+			it("should restore the position whatever the app keeps in the history state", async () => {
+
+				frame();
+				scroll("#list", 120);
+
+				history.replaceState({ limit: 200 }, "");
+
+				await follow("second");
+				await traverse("first", "/");
+
+				expect(offset("#list")).toBe(120);
+
+			});
+
+			it("should wait for the content to grow back before restoring", async () => {
+
+				const loaded = { height: 500 };
+
+				clamp(() => loaded.height);
+
+				frame();
+				scroll("#list", 120);
+
+				await follow("second");
+
+				loaded.height = 0;
+
+				await traverse("first", "/");
+
+				expect(offset("#list")).toBe(0);
+
+				await act(async () => {
+					loaded.height = 500;
+					document.querySelector("#list")?.append(document.createElement("p"));
+				});
+
+				expect(offset("#list")).toBe(120);
+
+			});
+
+			it("should give up restoring as soon as the reader scrolls", async () => {
+
+				const loaded = { height: 500 };
+
+				clamp(() => loaded.height);
+
+				frame();
+				scroll("#list", 120);
+
+				await follow("second");
+
+				loaded.height = 0;
+
+				await traverse("first", "/");
+
+				await act(async () => {
+					window.dispatchEvent(new WheelEvent("wheel"));
+					loaded.height = 500;
+					document.querySelector("#list")?.append(document.createElement("p"));
+				});
+
+				expect(offset("#list")).toBe(0);
+
+			});
+
+			it("should give up restoring after a few seconds", async () => {
+
+				vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+
+				const loaded = { height: 500 };
+
+				clamp(() => loaded.height);
+
+				frame();
+				scroll("#list", 120);
+
+				await follow("second");
+
+				loaded.height = 0;
+
+				await traverse("first", "/");
+
+				await act(async () => {
+					vi.advanceTimersByTime(10_000);
+					loaded.height = 500;
+					document.querySelector("#list")?.append(document.createElement("p"));
+				});
+
+				expect(offset("#list")).toBe(0);
+
+			});
+
+			it("should leave the position to the browser without the Navigation API", async () => {
+
+				vi.unstubAllGlobals();
+
+				frame();
+				scroll("#list", 120);
+
+				await act(async () => document.querySelector("a")?.click());
+				await traverse("first", "/");
+
+				expect(offset("#list")).toBe(0);
+
+			});
+
+		});
+
 	});
 
 	describe("focus", () => {

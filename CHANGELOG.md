@@ -9,6 +9,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `@metreeca/clay/router` - going back or forward through the browser history returns the window and every box with
+  a stable `id` in the `main` landmark to where the reader left them, waiting for content loaded after landing
+- `@metreeca/clay-widgets/tool` - going back or forward through the browser history returns the main body to where
+  the reader left it; the shell boxes carry fixed ids for this, so a page shows a single shell at a time
 - `@metreeca/clay-widgets/tool` - a screen replacing its content without a landing, as a catalogue does on a change
   of filters, states it through `gist`, and the main body returns to its top, so the reader never lands mid-list
 - `@metreeca/clay-widgets/icon` - a `Busy` role marks the app working on what the reader asked for, and the Tool shell

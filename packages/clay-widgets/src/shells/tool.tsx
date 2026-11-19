@@ -28,10 +28,16 @@ import { createState } from "@metreeca/core/state";
 import { equals } from "@metreeca/core/values";
 import { skin } from "@metreeca/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
-import { useEffect, useId } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
 
+
+/**
+ * The prefix of the ids of the shell boxes. It stays the same each time a screen mounts, so the router finds the main
+ * body again on a history traversal and returns it to the position the reader left it at.
+ */
+const Id = "clay-tool";
 
 /**
  * The delay a change of `busy` waits out before the frame shows it (ms).
@@ -92,6 +98,9 @@ const Ignored = Object.fromEntries([
  * body, as it stands before any scrolling. The side body keeps its place, so a reader never loses their position in it.
  * A screen replacing its content without a landing, as a catalogue does on a change of filters, states it through the
  * `gist`, and the main body opens at its top again, so the reader never lands halfway down a list they have not read.
+ * Under the Clay router, going back or forward through the browser history returns the main body to where the reader
+ * left it. The router finds the body again by the fixed ids of the shell boxes, so a page shows a single shell at a
+ * time, since a second shell on the same page would repeat those ids and leave the router unable to tell them apart.
  *
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a
@@ -254,14 +263,13 @@ export function Tool({
 
 }) {
 
-	const id = useId();
-	const side = `${id}-side`;
+	const side = `${Id}-side`;
 
 	// the landmark is named by the head on show, so the reference stands or falls with its target and never dangles
 
-	const title = head ? `${id}-title` : undefined;
+	const title = head ? `${Id}-title` : undefined;
 
-	const body = `${id}-body`;
+	const body = `${Id}-body`;
 
 	const { waiting, settle } = useModel(() => createState<Waiting>({
 
@@ -417,7 +425,7 @@ export function Tool({
 		 * below it, unless a locked side column keeps it in the main head, apart from the menu as on a wide viewport.
 		 */}
 
-		<main id={`${id}-main`} aria-labelledby={title} tabIndex={-1} inert={open}>
+		<main id={`${Id}-main`} aria-labelledby={title} tabIndex={-1} inert={open}>
 
 			<header>
 				{!tucked && !locked && <button type="button" popovertarget={side} aria-label="Open menu">
