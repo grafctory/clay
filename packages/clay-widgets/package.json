@@ -1,6 +1,6 @@
 {
   "name": "@metreeca/clay-widgets",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Preact interface components for @metreeca/clay.",
   "keywords": [
     "typescript",
@@ -317,7 +317,7 @@
     "@metreeca/skin": "^0.3.0"
   },
   "devDependencies": {
-    "@metreeca/clay": "^0.3.0",
+    "@metreeca/clay": "^0.4.0",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8",
@@ -326,7 +326,7 @@
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@metreeca/clay": "^0.3.0",
+    "@metreeca/clay": "^0.4.0",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"
   }
