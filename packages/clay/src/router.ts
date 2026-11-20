@@ -281,8 +281,8 @@ export interface Router {
 	 * equal to the app name, leaves the document title to the app name alone, with no page name ahead of it.
 	 *
 	 * Passing a title alone sets it without navigating and renders again only the components reading it. The views
-	 * below the enclosing {@link Router} render again only if the route actually changes, so a view may safely set its title
-	 * from an effect as it mounts, without rendering itself again or losing the state it holds.
+	 * below the enclosing {@link Router} render again only if the route actually changes, so a view may safely set its
+	 * title from an effect as it mounts, without rendering itself again or losing the state it holds.
 	 *
 	 * @param route The route or the navigation details; a route relative to the current one resolves as a link would
 	 */
@@ -438,7 +438,7 @@ export function Router({
 
 			const target = fragment(landing.hash);
 			const main = document.querySelector("main");
-			const boxes = main ? [main, ...main.querySelectorAll("*")] : []; // an app may scroll its content in a box of its own
+			const boxes = main ? [main, ...main.querySelectorAll("*")] : []; // apps may scroll content in their own box
 
 			window.scrollTo(0, 0);
 
@@ -581,7 +581,7 @@ export function Router({
 			const key = navigations()?.currentEntry?.key;
 
 			if ( event.navigationType === "replace" ) {
-				// the reader stays on the entry, maybe on a view just landed and still at its top, whose positions are kept
+				// the reader stays on the entry, maybe on a view just landed and still at its top: its positions stand
 			} else if ( isDefined(key) ) {
 				store(key, measure());
 			} else {

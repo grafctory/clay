@@ -5,18 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0](https://github.com/metreeca/clay/compare/v0.3.0...HEAD)
+## [Unreleased](https://github.com/metreeca/clay/compare/v0.4.0...HEAD)
+
+## [0.4.0](https://github.com/metreeca/clay/compare/v0.3.0...v0.4.0) - 2026-11-20
 
 ### Added
 
 - `@metreeca/clay/router` - going back or forward through the browser history returns the window and every box with
   a stable `id` in the `main` landmark to where the reader left them, waiting for content loaded after landing
-- `@metreeca/clay-widgets/tool` - going back or forward through the browser history returns the main body to where
-  the reader left it; the shell boxes carry fixed ids for this, so a page shows a single shell at a time
+- `@metreeca/clay-widgets/tool` - going back or forward through the history returns the main body where it was left
 - `@metreeca/clay-widgets/tool` - a screen replacing its content without a landing, as a catalogue does on a change
   of filters, states it through `gist`, and the main body returns to its top, so the reader never lands mid-list
 - `@metreeca/clay-widgets/icon` - a `Busy` role marks the app working on what the reader asked for, and the Tool shell
   turns it while waiting, so a waiting glyph no longer borrows the look of the `Reload` action
+
+### Changed
+
+- **Breaking**: `@metreeca/clay-widgets/tool` - a page shows a single Tool shell at a time, as the shell boxes now
+  carry fixed ids; a page nesting a second shell, as a preview pane might, lays its content out without one instead
 
 ## [0.3.0](https://github.com/metreeca/clay/compare/v0.2.1...v0.3.0) - 2026-11-19
 
