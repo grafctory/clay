@@ -45,7 +45,7 @@
  * Import the namespace once, then mark a control with any glyph Lucide draws, under the name Lucide gives it.
  *
  * ```tsx
- * import { Icon } from "@metreeca/clay-widgets/icon";
+ * import { Icon } from "@grafctory/clay-widgets/icon";
  *
  * <button onClick={launch}><Icon.Rocket/> Deploy</button>
  * ```

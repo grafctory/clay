@@ -20,16 +20,16 @@
  * @module
  */
 
-import { app } from "@metreeca/clay";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Logo } from "@metreeca/clay-widgets/logo";
-import { Strip } from "@metreeca/clay-widgets/strip";
-import { TOC } from "@metreeca/clay-widgets/toc";
-import { Tool } from "@metreeca/clay-widgets/tool";
-import { useFetch, useFetching } from "@metreeca/clay/fetch";
-import { useRouter } from "@metreeca/clay/router";
-import { ClayWidgetsPath } from "@metreeca/specimen/index.core.js";
+import { app } from "@grafctory/clay";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Logo } from "@grafctory/clay-widgets/logo";
+import { Strip } from "@grafctory/clay-widgets/strip";
+import { TOC } from "@grafctory/clay-widgets/toc";
+import { Tool } from "@grafctory/clay-widgets/tool";
+import { useFetch, useFetching } from "@grafctory/clay/fetch";
+import { useRouter } from "@grafctory/clay/router";
+import { ClayWidgetsPath } from "@grafctory/specimen/index.core.js";
 import { useState } from "preact/hooks";
 import "./tool.css";
 
@@ -61,8 +61,8 @@ export function ToolScreen() {
 		mark={<Button
 			icon={<Logo/>}
 			look="subtle"
-			name="@metreeca/clay"
-			title="@metreeca/clay"
+			name="@grafctory/clay"
+			title="@grafctory/clay"
 			onClick={() => router(`${ClayWidgetsPath}#tool`)}
 		/>}
 
@@ -116,12 +116,12 @@ export function ToolScreen() {
 
 		copy={<small>{app.copy}</small>}
 
-		foot={<code>@metreeca/clay-widgets/tool</code>}
+		foot={<code>@grafctory/clay-widgets/tool</code>}
 
 	>
 
 		<hgroup>
-			<p>@metreeca/clay-widgets</p>
+			<p>@grafctory/clay-widgets</p>
 			<h1>Tool Shell</h1>
 			<p>The frame the screens of an app or a tool are laid out in: a side column of standing controls beside a
 				main column holding the content of the moment.</p>

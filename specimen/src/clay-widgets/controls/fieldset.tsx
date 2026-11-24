@@ -20,10 +20,10 @@
  * @module
  */
 
-import { Fieldset } from "@metreeca/clay-widgets/fieldset";
-import { Input } from "@metreeca/clay-widgets/input";
-import { Label } from "@metreeca/clay-widgets/label";
-import { Switch } from "@metreeca/clay-widgets/switch";
+import { Fieldset } from "@grafctory/clay-widgets/fieldset";
+import { Input } from "@grafctory/clay-widgets/input";
+import { Label } from "@grafctory/clay-widgets/label";
+import { Switch } from "@grafctory/clay-widgets/switch";
 import { useState } from "preact/hooks";
 import "../index.css";
 

@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Markdown } from "@metreeca/clay-markdown/markdown";
+import { Markdown } from "@grafctory/clay-markdown/markdown";
 
 
 const text = `---

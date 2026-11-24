@@ -24,17 +24,17 @@
  * @module
  */
 
-import { isContent } from "@metreeca/clay-widgets";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Choice } from "@metreeca/clay-widgets/choice";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Link } from "@metreeca/clay-widgets/link";
-import { Strip } from "@metreeca/clay-widgets/strip";
-import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
-import { Tool } from "@metreeca/clay-widgets/tool";
-import { useFetching } from "@metreeca/clay/fetch";
-import { useRouter } from "@metreeca/clay/router";
-import { useStorage } from "@metreeca/clay/storage";
+import { isContent } from "@grafctory/clay-widgets";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Choice } from "@grafctory/clay-widgets/choice";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Link } from "@grafctory/clay-widgets/link";
+import { Strip } from "@grafctory/clay-widgets/strip";
+import { TOC, type TOCEntry } from "@grafctory/clay-widgets/toc";
+import { Tool } from "@grafctory/clay-widgets/tool";
+import { useFetching } from "@grafctory/clay/fetch";
+import { useRouter } from "@grafctory/clay/router";
+import { useStorage } from "@grafctory/clay/storage";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import { useEffect } from "preact/hooks";
 
@@ -121,9 +121,9 @@ export function Page({
 		busy={useFetching()}
 
 		mark={<Button
-			icon={<span class="brand">@metreeca/<strong>clay</strong></span>}
+			icon={<span class="brand">@grafctory/<strong>clay</strong></span>}
 			look="subtle"
-			name="@metreeca/clay"
+			name="@grafctory/clay"
 			onClick={() => router(Root)}
 		/>}
 

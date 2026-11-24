@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { useStorage } from "@metreeca/clay/storage";
+import { Button } from "@grafctory/clay-widgets/button";
+import { useStorage } from "@grafctory/clay/storage";
 import "../clay-widgets/index.css";
 
 

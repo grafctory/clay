@@ -27,7 +27,7 @@
  * @module index
  */
 
-import { isBoolean, type Optional } from "@metreeca/core";
+import { isBoolean, type Optional } from "@grafctory/core";
 
 
 /**

@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Stack } from "@metreeca/clay-widgets/stack";
-import { Frame, Items } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Stack } from "@grafctory/clay-widgets/stack";
+import { Frame, Items } from "@grafctory/specimen/clay-widgets/sample.js";
 import "../index.css";
 
 

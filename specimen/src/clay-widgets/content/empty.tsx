@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Empty } from "@metreeca/clay-widgets/empty";
-import { Icon } from "@metreeca/clay-widgets/icon";
+import { Empty } from "@grafctory/clay-widgets/empty";
+import { Icon } from "@grafctory/clay-widgets/icon";
 import "../index.css";
 
 

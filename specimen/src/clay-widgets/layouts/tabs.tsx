@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Tabs } from "@metreeca/clay-widgets/tabs";
-import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Tabs } from "@grafctory/clay-widgets/tabs";
+import { Frame } from "@grafctory/specimen/clay-widgets/sample.js";
 import "../index.css";
 
 

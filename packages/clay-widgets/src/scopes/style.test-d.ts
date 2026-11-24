@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { Token } from "@metreeca/skin";
+import type { Token } from "@grafctory/skin";
 import { describe, expectTypeOf, it } from "vitest";
 import { type Looks, Style } from "./style.js";
 

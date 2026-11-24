@@ -23,9 +23,9 @@
  * @module tabs
  */
 
-import { useFocus } from "@metreeca/clay/focus";
-import { useModel } from "@metreeca/clay/model";
-import { opt, type Optional } from "@metreeca/core";
+import { useFocus } from "@grafctory/clay/focus";
+import { useModel } from "@grafctory/clay/model";
+import { opt, type Optional } from "@grafctory/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId, useState } from "preact/hooks";
 import { createTabs } from "./tabs.core.js";

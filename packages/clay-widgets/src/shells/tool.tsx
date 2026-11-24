@@ -23,10 +23,10 @@
  * @module tool
  */
 
-import { useModel } from "@metreeca/clay/model";
-import { createState } from "@metreeca/core/state";
-import { equals } from "@metreeca/core/values";
-import { skin } from "@metreeca/skin";
+import { useModel } from "@grafctory/clay/model";
+import { createState } from "@grafctory/core/state";
+import { equals } from "@grafctory/core/values";
+import { skin } from "@grafctory/skin";
 import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
 import { useEffect } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
@@ -92,7 +92,7 @@ const Ignored = Object.fromEntries([
  * the focus stays where it stands and the content stays readable. After a short delay, the frame is also veiled, shows
  * a turning glyph at the end of the main head in place of the menu, and announces waiting to screen readers.
  *
- * The main column is named after `head` and takes the focus as the {@link @metreeca/clay!router.Router router} lands a
+ * The main column is named after `head` and takes the focus as the {@link @grafctory/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
  * The main body then opens at its top, or on the element a link targets, set below the head at the gutter of the
  * body, as it stands before any scrolling. The side body keeps its place, so a reader never loses their position in it.

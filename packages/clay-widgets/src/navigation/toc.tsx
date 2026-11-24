@@ -23,8 +23,8 @@
  * @module toc
  */
 
-import { useModel } from "@metreeca/clay/model";
-import { isArray, isString, opt, type Optional } from "@metreeca/core";
+import { useModel } from "@grafctory/clay/model";
+import { isArray, isString, opt, type Optional } from "@grafctory/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { createTOC, type TOC as Outline, type TOCMetrics } from "./toc.core.js";
@@ -117,7 +117,7 @@ export type TOCEntries = {
  * place the reader has left. A fragment naming no element, or an element ahead of every section, is left alone.
  *
  * The outline follows the box its sections scroll in, whatever lays the page out: the nearest scrolling ancestor of
- * the first section on the page, such as the main column of a {@link @metreeca/clay-widgets!tool.Tool tool}, or
+ * the first section on the page, such as the main column of a {@link @grafctory/clay-widgets!tool.Tool tool}, or
  * the document where no ancestor scrolls. The view is measured on the part of that box left in view, short of its
  * scroll padding, so a header standing over the box is not counted as room to read in.
  *

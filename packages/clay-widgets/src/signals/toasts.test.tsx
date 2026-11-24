@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Board, type Post, useBoard, usePosts } from "@metreeca/clay/board";
+import { Board, type Post, useBoard, usePosts } from "@grafctory/clay/board";
 import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

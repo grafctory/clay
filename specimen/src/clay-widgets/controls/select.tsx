@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Select } from "@metreeca/clay-widgets/select";
+import { Select } from "@grafctory/clay-widgets/select";
 import { useState } from "preact/hooks";
 import "../index.css";
 

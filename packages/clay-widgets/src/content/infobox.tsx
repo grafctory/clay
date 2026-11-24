@@ -23,8 +23,8 @@
  * @module infobox
  */
 
-import { isBoolean, isObject } from "@metreeca/core";
-import { type Some, some } from "@metreeca/core/arrays";
+import { isBoolean, isObject } from "@grafctory/core";
+import { type Some, some } from "@grafctory/core/arrays";
 import { type ComponentChildren, createElement, Fragment } from "preact";
 import "./infobox.css";
 

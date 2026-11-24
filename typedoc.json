@@ -3,10 +3,10 @@
     "packages/*"
   ],
   "entryPointStrategy": "packages",
-  "name": "@metreeca/clay",
+  "name": "@grafctory/clay",
   "out": "docs",
   "readme": "README.md",
-  "hostedBaseUrl": "https://metreeca.github.io/clay/",
+  "hostedBaseUrl": "https://grafctory.github.io/clay/",
   "useFirstParagraphOfCommentAsSummary": true,
   "favicon": "https://metreeca.com/assets/icon.ico",
   "sourceLinkExternal": true,
@@ -17,21 +17,21 @@
       "SyntaxError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
       "TypeError": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError"
     },
-    "@metreeca/core": {
-      "*": "https://metreeca.github.io/core/"
+    "@grafctory/core": {
+      "*": "https://grafctory.github.io/core/"
     },
-    "@metreeca/http": {
-      "*": "https://metreeca.github.io/http/"
+    "@grafctory/http": {
+      "*": "https://grafctory.github.io/http/"
     },
-    "@metreeca/skin": {
-      "*": "https://metreeca.github.io/skin/"
+    "@grafctory/skin": {
+      "*": "https://grafctory.github.io/skin/"
     },
     "preact": {
       "*": "https://preactjs.com/guide/v10/api-reference/"
     }
   },
   "navigationLinks": {
-    "GitHub": "https://github.com/metreeca/clay"
+    "GitHub": "https://github.com/grafctory/clay"
   },
   "githubPages": false,
   "hideGenerator": true,

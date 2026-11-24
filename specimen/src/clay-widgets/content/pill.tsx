@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Pill } from "@metreeca/clay-widgets/pill";
+import { Pill } from "@grafctory/clay-widgets/pill";
 
 
 /**

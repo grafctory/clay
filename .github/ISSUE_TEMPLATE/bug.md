@@ -1,13 +1,13 @@
 ---
 name: "Bug Report"
 about: "Create a report to help us improve"
-title: "What's wrong with @metreeca/clay?"
+title: "What's wrong with @grafctory/clay?"
 type: "Bug"
 ---
 
 **environment**
 
-- @metreeca/clay-*: *package/version*
+- @grafctory/clay-*: *package/version*
 - typescript: *version*
 - node.js: *version*
 - browser: *name/version*

@@ -20,11 +20,11 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Empty } from "@metreeca/clay-widgets/empty";
-import { Guard } from "@metreeca/clay-widgets/guard";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Board, usePosts } from "@metreeca/clay/board";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Empty } from "@grafctory/clay-widgets/empty";
+import { Guard } from "@grafctory/clay-widgets/guard";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Board, usePosts } from "@grafctory/clay/board";
 import { useState } from "preact/hooks";
 import "../index.css";
 

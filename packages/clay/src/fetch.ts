@@ -27,16 +27,16 @@
  * >
  * > The client is a plain [`fetch`](https://developer.mozilla.org/docs/Web/API/Window/fetch) function, so anything
  * > expecting one accepts it and anything producing one may replace it:
- * > [@metreeca/http](https://metreeca.github.io/http/) provides composable fetch middlewares covering recurring HTTP
+ * > [@grafctory/http](https://grafctory.github.io/http/) provides composable fetch middlewares covering recurring HTTP
  * > concerns, such as authentication, caching or uniform failure reporting.
  *
  * @module
  */
 
-import { createFetch, type Fetch } from "@metreeca/http";
-import { headers } from "@metreeca/http/headers";
-import { monitor } from "@metreeca/http/monitor";
-import { transport } from "@metreeca/http/transport";
+import { createFetch, type Fetch } from "@grafctory/http";
+import { headers } from "@grafctory/http/headers";
+import { monitor } from "@grafctory/http/monitor";
+import { transport } from "@grafctory/http/transport";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useState } from "preact/hooks";
 
@@ -64,7 +64,7 @@ const StatusContext = createContext<boolean>(false);
  * stated without any call site taking part.
  *
  * Whatever a deployment settles for itself stays with the consumer: a client assembled with
- * {@link @metreeca/http!createFetch createFetch} and handed over keeps the services above, with its own middlewares
+ * {@link @grafctory/http!createFetch createFetch} and handed over keeps the services above, with its own middlewares
  * running closer to the network.
  *
  * The client is assembled as the context first renders and kept for as long as it lives, so that exchanges are not

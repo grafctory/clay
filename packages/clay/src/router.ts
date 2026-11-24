@@ -146,8 +146,8 @@
  * @module
  */
 
-import { isArray, isDefined, isNull, isNumber, isObject, isString, opt, Optional } from "@metreeca/core";
-import { tidy } from "@metreeca/core/strings";
+import { isArray, isDefined, isNull, isNumber, isObject, isString, opt, Optional } from "@grafctory/core";
+import { tidy } from "@grafctory/core/strings";
 import { type ComponentChildren, createContext, createElement, type VNode } from "preact";
 import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from "preact/hooks";
 import { app } from "./index.js";
@@ -160,7 +160,7 @@ const ActiveAttribute = "active";
 /**
  * The prefix of the `sessionStorage` entries holding the scroll positions of a history entry.
  */
-const PositionsPrefix = "@metreeca/clay/router:positions:";
+const PositionsPrefix = "@grafctory/clay/router:positions:";
 
 /**
  * The time restoring the scroll positions of a history entry waits for its content to grow back (ms).
@@ -368,7 +368,7 @@ export interface Router {
  *   on; the landmark takes the focus only if it is focusable, as a `tabindex` of `-1` makes it without adding a tab
  *   stop; otherwise the focus is cleared, so the next keystroke never acts on a control of the page left behind
  * - a link to another site opens in a new browsing context
- * - an image outside any link toggles its `active` attribute, which the `@metreeca/skin` stylesheet reads to show it
+ * - an image outside any link toggles its `active` attribute, which the `@grafctory/skin` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
  *
  * An enlarged image is restored by another click on it, by `Escape`, or as soon as the focus moves, so a keyboard user

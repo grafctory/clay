@@ -29,9 +29,9 @@
  * @module index
  */
 
-import { type Optional } from "@metreeca/core";
-import { resolve } from "@metreeca/core/resource";
-import { immutable } from "@metreeca/core/values";
+import { type Optional } from "@grafctory/core";
+import { resolve } from "@grafctory/core/resource";
+import { immutable } from "@grafctory/core/values";
 
 
 /**

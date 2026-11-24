@@ -34,11 +34,11 @@
  * @module
  */
 
-import { assert } from "@metreeca/core";
-import { some, type Some } from "@metreeca/core/arrays";
-import { clip } from "@metreeca/core/strings";
-import { equals, immutable } from "@metreeca/core/values";
-import { isProblem, type Problem, toProblem } from "@metreeca/http/success";
+import { assert } from "@grafctory/core";
+import { some, type Some } from "@grafctory/core/arrays";
+import { clip } from "@grafctory/core/strings";
+import { equals, immutable } from "@grafctory/core/values";
+import { isProblem, type Problem, toProblem } from "@grafctory/http/success";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
 
@@ -131,14 +131,14 @@ export interface Board {
 	 * The post tells from the shape of the issue what went wrong:
 	 *
 	 * - problem details, that is an object carrying at least one of `type`, `title`, `status`, `detail`, `instance` or
-	 *   `report`, are kept as they are, so an issue reported by {@link @metreeca/http!success success} keeps the status
+	 *   `report`, are kept as they are, so an issue reported by {@link @grafctory/http!success success} keeps the status
 	 *   and the explanation its source gave it, and make the post a `failure`: an operation that did not complete
 	 * - an {@link !Error Error} becomes `status` 0, with its name as `title` and its message as `detail`, the stack
 	 *   left out as a post is expected to travel beyond the page that raised it, and makes the post a `defect`
 	 * - anything else becomes `status` 0, carried as `report` if it is JSON data and as `detail` otherwise, and makes
 	 *   the post a `defect` as well, being a value the interface threw rather than one it reported on purpose
 	 *
-	 * Every failed exchange reaches the board as problem details through {@link @metreeca/http!success success},
+	 * Every failed exchange reaches the board as problem details through {@link @grafctory/http!success success},
 	 * transport failures included, so a rejection nobody attended is still told as the failure it was, and `defect` is
 	 * left to whatever the interface threw on its own account; a client lacking that middleware has its transport
 	 * failures stated as defects, since they reach the board as plain errors rather than as problem details.

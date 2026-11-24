@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Checkbox } from "@metreeca/clay-widgets/checkbox";
-import { Label } from "@metreeca/clay-widgets/label";
+import { Checkbox } from "@grafctory/clay-widgets/checkbox";
+import { Label } from "@grafctory/clay-widgets/label";
 import { useState } from "preact/hooks";
 import "../index.css";
 

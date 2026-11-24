@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { useModel } from "@metreeca/clay/model";
-import { createState } from "@metreeca/core/state";
+import { Button } from "@grafctory/clay-widgets/button";
+import { useModel } from "@grafctory/clay/model";
+import { createState } from "@grafctory/core/state";
 import "../clay-widgets/index.css";
 
 

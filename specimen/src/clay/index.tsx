@@ -20,13 +20,13 @@
  * @module
  */
 
-import { Board } from "@metreeca/specimen/clay/board.js";
-import { Fetch } from "@metreeca/specimen/clay/fetch.js";
-import { Focus } from "@metreeca/specimen/clay/focus.js";
-import { Model } from "@metreeca/specimen/clay/model.js";
-import { Storage } from "@metreeca/specimen/clay/storage.js";
-import { Transfer } from "@metreeca/specimen/clay/transfer.js";
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
+import { Board } from "@grafctory/specimen/clay/board.js";
+import { Fetch } from "@grafctory/specimen/clay/fetch.js";
+import { Focus } from "@grafctory/specimen/clay/focus.js";
+import { Model } from "@grafctory/specimen/clay/model.js";
+import { Storage } from "@grafctory/specimen/clay/storage.js";
+import { Transfer } from "@grafctory/specimen/clay/transfer.js";
+import { Page, type Sample } from "@grafctory/specimen/index.core.js";
 
 
 const samples: readonly Sample[] = [
@@ -49,7 +49,7 @@ export function Clay() {
 
 	return <Page
 
-		eyebrow="@metreeca/clay"
+		eyebrow="@grafctory/clay"
 		title="Contexts and Hooks"
 		lead={<>
 			The behaviour an interface is wired to, with no rendering of its own: state objects adopted as component

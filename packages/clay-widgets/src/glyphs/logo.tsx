@@ -22,8 +22,8 @@
  * @module logo
  */
 
-import { app } from "@metreeca/clay";
-import { opt } from "@metreeca/core";
+import { app } from "@grafctory/clay";
+import { opt } from "@grafctory/core";
 import { createElement } from "preact";
 import "./logo.css";
 

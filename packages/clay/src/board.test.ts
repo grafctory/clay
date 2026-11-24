@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { Problem } from "@metreeca/http/success";
+import type { Problem } from "@grafctory/http/success";
 import { createElement, Fragment, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

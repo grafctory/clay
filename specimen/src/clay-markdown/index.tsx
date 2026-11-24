@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Marks } from "@metreeca/specimen/clay-markdown/markdown.js";
-import { Page, type Sample } from "@metreeca/specimen/index.core.js";
+import { Marks } from "@grafctory/specimen/clay-markdown/markdown.js";
+import { Page, type Sample } from "@grafctory/specimen/index.core.js";
 
 
 const samples: readonly Sample[] = [
@@ -37,7 +37,7 @@ export function ClayMarkdown() {
 
 	return <Page
 
-		eyebrow="@metreeca/clay-markdown"
+		eyebrow="@grafctory/clay-markdown"
 		title="Markdown Documents"
 		lead={<>
 			Markdown rendered as a page of its own, with a table of contents following the reader and front matter read

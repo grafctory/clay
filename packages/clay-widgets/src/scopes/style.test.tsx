@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { css, skin } from "@metreeca/skin";
+import { css, skin } from "@grafctory/skin";
 import { render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it } from "vitest";

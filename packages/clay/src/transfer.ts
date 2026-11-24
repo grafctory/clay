@@ -105,9 +105,9 @@
  * @module
  */
 
-import { isPromiseLike, type Optional } from "@metreeca/core";
-import { type Awaitable } from "@metreeca/core/async";
-import { immutable } from "@metreeca/core/values";
+import { isPromiseLike, type Optional } from "@grafctory/core";
+import { type Awaitable } from "@grafctory/core/async";
+import { immutable } from "@grafctory/core/values";
 import { type ComponentChildren, createContext, createElement } from "preact";
 import { useContext, useEffect, useLayoutEffect, useState } from "preact/hooks";
 import { isReserved } from "./index.js";
@@ -335,7 +335,7 @@ export type Side =
  * running a single drag at a time across the page anyway. A source or a target outside any stays inert.
  *
  * Draws a status region announcing how each move ended, and lets touch readers drag on the browsers that fire no drag
- * events from a finger. Only the `@metreeca/skin` stylesheet keeps the region from sight while leaving it to screen
+ * events from a finger. Only the `@grafctory/skin` stylesheet keeps the region from sight while leaving it to screen
  * readers: an app running without that stylesheet must hide `[data-offscreen]` elements with a rule of its own.
  *
  * @param options The components transfers are offered to

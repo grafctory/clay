@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Tree } from "@metreeca/clay-widgets/tree";
+import { Tree } from "@grafctory/clay-widgets/tree";
 
 
 /**

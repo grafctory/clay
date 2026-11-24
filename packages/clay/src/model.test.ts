@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createState } from "@metreeca/core/state";
+import { createState } from "@grafctory/core/state";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

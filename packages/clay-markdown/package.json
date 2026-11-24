@@ -1,15 +1,15 @@
 {
-  "name": "@metreeca/clay-markdown",
+  "name": "@grafctory/clay-markdown",
   "version": "0.4.1",
-  "description": "Preact Markdown documents for @metreeca/clay.",
+  "description": "Preact Markdown documents for @grafctory/clay.",
   "keywords": [
     "typescript",
     "preact",
     "ui"
   ],
-  "homepage": "https://metreeca.github.io/clay/",
+  "homepage": "https://grafctory.github.io/clay/",
   "bugs": {
-    "url": "https://github.com/metreeca/clay/issues",
+    "url": "https://github.com/grafctory/clay/issues",
     "email": "info@metreeca.com"
   },
   "license": "Apache-2.0",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/metreeca/clay.git",
+    "url": "git+https://github.com/grafctory/clay.git",
     "directory": "packages/clay-markdown"
   },
   "type": "module",
@@ -29,11 +29,11 @@
   ],
   "exports": {
     "./*": {
-      "@metreeca/source": "./src/*.tsx",
+      "@grafctory/source": "./src/*.tsx",
       "default": "./dist/*.js"
     },
     "./*.css": {
-      "@metreeca/source": "./src/*.css",
+      "@grafctory/source": "./src/*.css",
       "default": "./dist/*.css"
     },
     "./*.core": null
@@ -52,8 +52,8 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/clay-widgets": "^0.4.1",
-    "@metreeca/core": "^0.14.0",
+    "@grafctory/clay-widgets": "^0.4.1",
+    "@grafctory/core": "^0.14.0",
     "hast-util-heading-rank": "^3.0.0",
     "hast-util-to-jsx-runtime": "^2.3.7",
     "rehype-highlight": "^7.0.2",

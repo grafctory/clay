@@ -15,7 +15,7 @@
  */
 
 
-import { toValueString, Value } from "@metreeca/core/value";
+import { toValueString, Value } from "@grafctory/core/value";
 import { useTrailing } from "@metreeca/data/hooks/events";
 import { Matches } from "@metreeca/data/models/matches";
 import { AutoDelay, AutoLength, AutoSize, keys } from "@metreeca/view";

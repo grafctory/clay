@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Toasts } from "@metreeca/clay-widgets/toasts";
-import { Board, type Post, useBoard, usePosts } from "@metreeca/clay/board";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Toasts } from "@grafctory/clay-widgets/toasts";
+import { Board, type Post, useBoard, usePosts } from "@grafctory/clay/board";
 import "../index.css";
 
 

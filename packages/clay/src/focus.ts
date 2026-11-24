@@ -56,8 +56,8 @@
  * @module
  */
 
-import { type Optional } from "@metreeca/core";
-import { immutable } from "@metreeca/core/values";
+import { type Optional } from "@grafctory/core";
+import { immutable } from "@grafctory/core/values";
 import { isReserved } from "./index.js";
 
 

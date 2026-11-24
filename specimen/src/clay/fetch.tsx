@@ -20,10 +20,10 @@
  * @module
  */
 
-import { app } from "@metreeca/clay";
-import { Button } from "@metreeca/clay-widgets/button";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { useFetch, useFetching } from "@metreeca/clay/fetch";
+import { app } from "@grafctory/clay";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { useFetch, useFetching } from "@grafctory/clay/fetch";
 import { useState } from "preact/hooks";
 import "../clay-widgets/index.css";
 

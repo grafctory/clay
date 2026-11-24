@@ -20,39 +20,39 @@
  * @module
  */
 
-import { Empties } from "@metreeca/specimen/clay-widgets/content/empty.js";
-import { Headings } from "@metreeca/specimen/clay-widgets/content/heading.js";
-import { Images } from "@metreeca/specimen/clay-widgets/content/image.js";
-import { Infoboxes } from "@metreeca/specimen/clay-widgets/content/infobox.js";
-import { Pills } from "@metreeca/specimen/clay-widgets/content/pill.js";
-import { Texts } from "@metreeca/specimen/clay-widgets/content/text.js";
-import { Buttons } from "@metreeca/specimen/clay-widgets/controls/button.js";
-import { Checkboxes } from "@metreeca/specimen/clay-widgets/controls/checkbox.js";
-import { Choices } from "@metreeca/specimen/clay-widgets/controls/choice.js";
-import { Fieldsets } from "@metreeca/specimen/clay-widgets/controls/fieldset.js";
-import { Forms } from "@metreeca/specimen/clay-widgets/controls/form.js";
-import { Inputs } from "@metreeca/specimen/clay-widgets/controls/input.js";
-import { Labels } from "@metreeca/specimen/clay-widgets/controls/label.js";
-import { Radios } from "@metreeca/specimen/clay-widgets/controls/radio.js";
-import { Selects } from "@metreeca/specimen/clay-widgets/controls/select.js";
-import { Switches } from "@metreeca/specimen/clay-widgets/controls/switch.js";
-import { Textareas } from "@metreeca/specimen/clay-widgets/controls/textarea.js";
-import { Icons } from "@metreeca/specimen/clay-widgets/glyphs/icon.js";
-import { Logos } from "@metreeca/specimen/clay-widgets/glyphs/logo.js";
-import { Cards } from "@metreeca/specimen/clay-widgets/layouts/card.js";
-import { Stacks } from "@metreeca/specimen/clay-widgets/layouts/stack.js";
-import { Strips } from "@metreeca/specimen/clay-widgets/layouts/strip.js";
-import { Tabbed } from "@metreeca/specimen/clay-widgets/layouts/tabs.js";
-import { Trees } from "@metreeca/specimen/clay-widgets/layouts/tree.js";
-import { Links } from "@metreeca/specimen/clay-widgets/navigation/link.js";
-import { Paths } from "@metreeca/specimen/clay-widgets/navigation/path.js";
-import { Contents } from "@metreeca/specimen/clay-widgets/navigation/toc.js";
-import { Guards } from "@metreeca/specimen/clay-widgets/scopes/guard.js";
-import { Styles } from "@metreeca/specimen/clay-widgets/scopes/style.js";
-import { Triggers } from "@metreeca/specimen/clay-widgets/signals/more.js";
-import { Notes } from "@metreeca/specimen/clay-widgets/signals/note.js";
-import { Toasted } from "@metreeca/specimen/clay-widgets/signals/toasts.js";
-import { Page, type Sample, ToolPath } from "@metreeca/specimen/index.core.js";
+import { Empties } from "@grafctory/specimen/clay-widgets/content/empty.js";
+import { Headings } from "@grafctory/specimen/clay-widgets/content/heading.js";
+import { Images } from "@grafctory/specimen/clay-widgets/content/image.js";
+import { Infoboxes } from "@grafctory/specimen/clay-widgets/content/infobox.js";
+import { Pills } from "@grafctory/specimen/clay-widgets/content/pill.js";
+import { Texts } from "@grafctory/specimen/clay-widgets/content/text.js";
+import { Buttons } from "@grafctory/specimen/clay-widgets/controls/button.js";
+import { Checkboxes } from "@grafctory/specimen/clay-widgets/controls/checkbox.js";
+import { Choices } from "@grafctory/specimen/clay-widgets/controls/choice.js";
+import { Fieldsets } from "@grafctory/specimen/clay-widgets/controls/fieldset.js";
+import { Forms } from "@grafctory/specimen/clay-widgets/controls/form.js";
+import { Inputs } from "@grafctory/specimen/clay-widgets/controls/input.js";
+import { Labels } from "@grafctory/specimen/clay-widgets/controls/label.js";
+import { Radios } from "@grafctory/specimen/clay-widgets/controls/radio.js";
+import { Selects } from "@grafctory/specimen/clay-widgets/controls/select.js";
+import { Switches } from "@grafctory/specimen/clay-widgets/controls/switch.js";
+import { Textareas } from "@grafctory/specimen/clay-widgets/controls/textarea.js";
+import { Icons } from "@grafctory/specimen/clay-widgets/glyphs/icon.js";
+import { Logos } from "@grafctory/specimen/clay-widgets/glyphs/logo.js";
+import { Cards } from "@grafctory/specimen/clay-widgets/layouts/card.js";
+import { Stacks } from "@grafctory/specimen/clay-widgets/layouts/stack.js";
+import { Strips } from "@grafctory/specimen/clay-widgets/layouts/strip.js";
+import { Tabbed } from "@grafctory/specimen/clay-widgets/layouts/tabs.js";
+import { Trees } from "@grafctory/specimen/clay-widgets/layouts/tree.js";
+import { Links } from "@grafctory/specimen/clay-widgets/navigation/link.js";
+import { Paths } from "@grafctory/specimen/clay-widgets/navigation/path.js";
+import { Contents } from "@grafctory/specimen/clay-widgets/navigation/toc.js";
+import { Guards } from "@grafctory/specimen/clay-widgets/scopes/guard.js";
+import { Styles } from "@grafctory/specimen/clay-widgets/scopes/style.js";
+import { Triggers } from "@grafctory/specimen/clay-widgets/signals/more.js";
+import { Notes } from "@grafctory/specimen/clay-widgets/signals/note.js";
+import { Toasted } from "@grafctory/specimen/clay-widgets/signals/toasts.js";
+import { Page, type Sample, ToolPath } from "@grafctory/specimen/index.core.js";
 
 
 const samples: readonly Sample[] = [
@@ -107,7 +107,7 @@ export function ClayWidgets() {
 
 	return <Page
 
-		eyebrow="@metreeca/clay-widgets"
+		eyebrow="@grafctory/clay-widgets"
 		title="Interface Components"
 		lead={<>
 			The pieces an interface is assembled from, each drawn from the design system tokens alone. Every sample on

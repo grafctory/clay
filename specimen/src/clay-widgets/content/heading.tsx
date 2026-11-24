@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Heading } from "@metreeca/clay-widgets/heading";
+import { Heading } from "@grafctory/clay-widgets/heading";
 
 
 /**

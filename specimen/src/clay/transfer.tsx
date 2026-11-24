@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { type Drop, type Side, useTransferSource, useTransferTarget } from "@metreeca/clay/transfer";
-import { Moves, opening } from "@metreeca/specimen/clay/moves.js";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { type Drop, type Side, useTransferSource, useTransferTarget } from "@grafctory/clay/transfer";
+import { Moves, opening } from "@grafctory/specimen/clay/moves.js";
 import { useId, useState } from "preact/hooks";
 import "./transfer.css";
 

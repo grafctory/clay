@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Style } from "@metreeca/clay-widgets/style";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Style } from "@grafctory/clay-widgets/style";
 import { type ComponentChild } from "preact";
 import "../index.css";
 import "./button.css";

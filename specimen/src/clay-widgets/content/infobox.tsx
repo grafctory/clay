@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Infobox } from "@metreeca/clay-widgets/infobox";
-import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Infobox } from "@grafctory/clay-widgets/infobox";
+import { Frame } from "@grafctory/specimen/clay-widgets/sample.js";
 import { type ComponentChildren } from "preact";
 import "../index.css";
 

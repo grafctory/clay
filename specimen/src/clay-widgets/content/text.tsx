@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Style } from "@metreeca/clay-widgets/style";
-import { Text } from "@metreeca/clay-widgets/text";
+import { Style } from "@grafctory/clay-widgets/style";
+import { Text } from "@grafctory/clay-widgets/text";
 import "../index.css";
 
 

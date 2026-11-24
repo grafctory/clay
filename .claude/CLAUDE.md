@@ -15,18 +15,18 @@ Metreeca Clay is the general-purpose component layer of the Metreeca stack: the 
 movable items an interface is assembled from, with no commitment to a data model. The monorepo collects the
 rendering-layer packages, each sitting directly under `packages/` (for example `packages/clay/`).
 
-Clay **NEVER** depends on `@metreeca/blue`, `@metreeca/qest` or `@metreeca/keep`: a component needing a shape or a query
+Clay **NEVER** depends on `@grafctory/blue`, `@grafctory/qest` or `@grafctory/keep`: a component needing a shape or a query
 is out of scope, and belongs to a linked data layer built outside this repository.
 
 # References
 
 - [Preact](https://preactjs.com/guide/v10/getting-started) - Fast 3kB alternative to React with the same API, the
 	rendering layer every package renders with and takes as a peer dependency
-- [@metreeca/core](https://github.com/metreeca/core) - Core utilities and shared types, providing the state primitives
+- [@grafctory/core](https://github.com/grafctory/core) - Core utilities and shared types, providing the state primitives
 	the headless components are built on
-- [@metreeca/http](https://github.com/metreeca/http) - Composable middleware for the standard fetch API, providing the
+- [@grafctory/http](https://github.com/grafctory/http) - Composable middleware for the standard fetch API, providing the
 	client the shared fetch context wraps
-- [@metreeca/skin](https://github.com/metreeca/skin) - Essential design tokens and styles, providing the token contract
+- [@grafctory/skin](https://github.com/grafctory/skin) - Essential design tokens and styles, providing the token contract
 	and the stylesheet every component sheet reads from
 
 # NPM Scripts
@@ -48,15 +48,15 @@ from their working trees rather than from the registry, and shares the root lock
 A package compiles against its siblings through their `dist`, so each `tsconfig.build.json` is `composite` and names
 those siblings under `references`, and the package `build` runs `tsc -b`: the compiler settles the order and brings a
 stale sibling up to date first, whatever order the workspaces are visited in. A package added here declares a reference
-for every `@metreeca/clay*` dependency it takes, or it compiles against whatever its sibling last left behind. The build
+for every `@grafctory/clay*` dependency it takes, or it compiles against whatever its sibling last left behind. The build
 is incremental, its cache being the `tsconfig.build.tsbuildinfo` each package's `clean` removes alongside `dist`:
 deleting `dist` by hand leaves that cache claiming the outputs are current, and the next build emits nothing.
 
 Every package is a Preact binding: `clay` for the app-wide services a component is wired to, `clay-widgets` for the
 widgets, layouts and glyphs an interface is assembled from, and `clay-markdown` for Markdown documents. Headless
-behaviour carries **NO** dependency on a rendering framework: it lives in `@metreeca/core` and in `*.core.ts`
+behaviour carries **NO** dependency on a rendering framework: it lives in `@grafctory/core` and in `*.core.ts`
 modules, and any other rendering layer added later gets binding packages of its own. A binding package adds observation
-and rendering over state it never redefines: behaviour lives in framework-agnostic `@metreeca/core` state objects, so a
+and rendering over state it never redefines: behaviour lives in framework-agnostic `@grafctory/core` state objects, so a
 second binding reaches the same behaviour without restating it.
 
 ## Package Distribution
@@ -86,8 +86,8 @@ or the gesture they contribute it with: `transfer` names moving items, whether b
 
 # Transfers
 
-`@metreeca/clay/transfer` carries state and behaviour only: every widget moving things draws its own grip, menu, drop
-indicator and drag states, reading the existing `@metreeca/skin` roles, with no tokens of its own. The design record
+`@grafctory/clay/transfer` carries state and behaviour only: every widget moving things draws its own grip, menu, drop
+indicator and drag states, reading the existing `@grafctory/skin` roles, with no tokens of its own. The design record
 behind it (no keyboard dragging, menus as the single-pointer path, native drag and drop, MIME types as kinds) is in the
 module documentation, which also lists what the module guarantees and what each widget still owes for WCAG 2.2 AA.
 
@@ -101,20 +101,20 @@ module documentation, which also lists what the module guarantees and what each 
 
 Every package states its summary in three places, which **MUST** be kept aligned:
 
-- `packages/<package>/package.json` `description` - `<summary> for @metreeca/clay.`
-- `packages/<package>/README.md`, first line after the badge - the same sentence, with `@metreeca/clay` linked to the
+- `packages/<package>/package.json` `description` - `<summary> for @grafctory/clay.`
+- `packages/<package>/README.md`, first line after the badge - the same sentence, with `@grafctory/clay` linked to the
 	project repository
 - the root `README.md` package table - `<summary>` with the rendering layer left off, since the rows sit under prose
 	that already states it (`Contexts and hooks`, not `Preact contexts and hooks`)
 
-The suffix names the project repository as `@metreeca/clay`, for every package alike.
+The suffix names the project repository as `@grafctory/clay`, for every package alike.
 
 A package carrying a `src/index.ts` states it in a fourth place, that module's doc definition line, as `<summary>.`
 without the family suffix. Revising one **ALWAYS** means revising the others.
 
 A package `README.md` **Usage** section opens with a note pointing at the API reference, then carries what a consumer
 has to know to put the package to work, stubbed as `{TBD: usage overview and examples}` until written. The note links
-the root of the package reference, `https://metreeca.github.io/clay/modules/_metreeca_<package>.html`, and **NEVER**
+the root of the package reference, `https://grafctory.github.io/clay/modules/_grafctory_<package>.html`, and **NEVER**
 the site root, a module page, or a table of them.
 
 # Design Precedent
@@ -132,8 +132,8 @@ link them, never reproduce them, and write whatever is borrowed in the Metreeca 
 
 # Component State
 
-A component holding state declares it as a `@metreeca/core` state object and adopts it with `useModel` from
-`@metreeca/clay/model`, reading data and transitions straight off the model:
+A component holding state declares it as a `@grafctory/core` state object and adopts it with `useModel` from
+`@grafctory/clay/model`, reading data and transitions straight off the model:
 
 ```tsx
 const { labels, active, select } = useModel(() => createTabs({ labels: Object.keys(panels) }));
@@ -178,12 +178,12 @@ imports. The prefix is carried by the element, which the DOM requires to be hyph
 component, which the module path already places: `Tabs` in `tabs.tsx`, rendering `<clay-tabs>` styled by `tabs.css`.
 
 > [!CAUTION]
-> Every sheet here is built on `@metreeca/skin`: activate `css-developer` before touching one. Its `skin`, `meaning`,
+> Every sheet here is built on `@grafctory/skin`: activate `css-developer` before touching one. Its `skin`, `meaning`,
 > `palettes` and `viewports` task skills carry the design system discipline and vocabularies a Clay widget follows.
 
 # Shared Utilities
 
-Reach for `@metreeca/core` before writing a helper: its `state`, `strings`, `arrays` and `structures` entry points
+Reach for `@grafctory/core` before writing a helper: its `state`, `strings`, `arrays` and `structures` entry points
 already cover the state primitives alongside the common collection and value operations. A hand-rolled equivalent
 duplicates tested code and drifts from it, missing the edge cases the shared one handles.
 
@@ -193,18 +193,18 @@ is, so the next reader doesn't take it for an oversight.
 # Immutable Results
 
 Every object or array a public API hands out, hook results, tuples and context values included, **MUST** be passed
-through `immutable()` from `@metreeca/core/values`, so a consumer can never change state it does not own. Values taken
+through `immutable()` from `@grafctory/core/values`, so a consumer can never change state it does not own. Values taken
 from outside, such as parsed JSON or a caller's initial value, are frozen too before they are handed back; an array
 rebuilt by a transition is frozen anew, while one left unchanged keeps its identity so the context renders nothing.
 
 # Testing
 
-The root `vitest.config.ts` resolves imports of symlinked `@metreeca/*` packages, both workspace packages and siblings
-linked by `npm run setup`, to the TypeScript source their `@metreeca/source` export entries declare, so tests run
+The root `vitest.config.ts` resolves imports of symlinked `@grafctory/*` packages, both workspace packages and siblings
+linked by `npm run setup`, to the TypeScript source their `@grafctory/source` export entries declare, so tests run
 against `src/` without a prior build. Packages installed from the registry keep resolving to their published `dist`.
 
 > [!CAUTION]
-> **NEVER** enable `@metreeca/source` through vitest `resolve.conditions`. Published manifests carry the condition
+> **NEVER** enable `@grafctory/source` through vitest `resolve.conditions`. Published manifests carry the condition
 > while their packages ship no `src/`, and Vite does not fall back to `default` on a missing target, so a global
 > condition breaks every package installed from the registry that declares it, as happens under `npm ci` in CI.
 
@@ -230,7 +230,7 @@ A sample added to a page takes the place these rules give it, never the end of i
 # Version Management
 
 All workspace packages share the root `package.json` version. Beyond the `version` fields the release flow already
-cascades, update the internal `@metreeca/clay*` dependency ranges in every `packages/**/package.json` to match. The
+cascades, update the internal `@grafctory/clay*` dependency ranges in every `packages/**/package.json` to match. The
 specimen, a private workspace, takes the packages it shows through `file:` links rather than ranges, so it follows every
 version without being touched, and a newly cut line never leaves it asking the registry for an unpublished release.
 

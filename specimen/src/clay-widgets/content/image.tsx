@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Image } from "@metreeca/clay-widgets/image";
-import { landscape } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Image } from "@grafctory/clay-widgets/image";
+import { landscape } from "@grafctory/specimen/clay-widgets/sample.js";
 import "../index.css";
 
 

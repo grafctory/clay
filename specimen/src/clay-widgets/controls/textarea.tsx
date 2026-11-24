@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Textarea } from "@metreeca/clay-widgets/textarea";
+import { Textarea } from "@grafctory/clay-widgets/textarea";
 import "../index.css";
 
 

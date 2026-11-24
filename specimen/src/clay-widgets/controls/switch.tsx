@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Label } from "@metreeca/clay-widgets/label";
-import { Switch } from "@metreeca/clay-widgets/switch";
+import { Label } from "@grafctory/clay-widgets/label";
+import { Switch } from "@grafctory/clay-widgets/switch";
 import { useState } from "preact/hooks";
 import "../index.css";
 

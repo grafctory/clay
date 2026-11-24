@@ -23,8 +23,8 @@
  * @module stack
  */
 
-import { opt } from "@metreeca/core";
-import { css, skin, type Spacing } from "@metreeca/skin";
+import { opt } from "@grafctory/core";
+import { css, skin, type Spacing } from "@grafctory/skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./stack.css";
 
@@ -45,7 +45,7 @@ const justify = {
  * Creates a vertical stack.
  *
  * Places what it holds one item below the other, in the order given, with the same gap between each pair and none
- * before the first or after the last. The gap is a step of the {@link @metreeca/skin!index.skin spacing ladder}, so it
+ * before the first or after the last. The gap is a step of the {@link @grafctory/skin!index.skin spacing ladder}, so it
  * follows the text size of the stack and whatever an app retuned the ladder to.
  *
  * The stack stands as tall as its items and as wide as whatever holds it, each item taking the full width unless

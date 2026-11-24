@@ -23,18 +23,18 @@
  * @module
  */
 
-import "@metreeca/skin/presets/roboto.css";
-import { host } from "@metreeca/clay";
-import { Fetch } from "@metreeca/clay/fetch";
-import { Router, Routes } from "@metreeca/clay/router";
-import { Transfer } from "@metreeca/clay/transfer";
-import { createFetch } from "@metreeca/http";
-import { mock } from "@metreeca/http/mock";
-import { ClayMarkdown } from "@metreeca/specimen/clay-markdown/index.js";
-import { ClayWidgets } from "@metreeca/specimen/clay-widgets/index.js";
-import { ToolScreen } from "@metreeca/specimen/clay-widgets/shells/tool.js";
-import { Clay } from "@metreeca/specimen/clay/index.js";
-import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, ToolPath } from "@metreeca/specimen/index.core.js";
+import "@grafctory/skin/presets/roboto.css";
+import { host } from "@grafctory/clay";
+import { Fetch } from "@grafctory/clay/fetch";
+import { Router, Routes } from "@grafctory/clay/router";
+import { Transfer } from "@grafctory/clay/transfer";
+import { createFetch } from "@grafctory/http";
+import { mock } from "@grafctory/http/mock";
+import { ClayMarkdown } from "@grafctory/specimen/clay-markdown/index.js";
+import { ClayWidgets } from "@grafctory/specimen/clay-widgets/index.js";
+import { ToolScreen } from "@grafctory/specimen/clay-widgets/shells/tool.js";
+import { Clay } from "@grafctory/specimen/clay/index.js";
+import { ClayMarkdownPath, ClayPath, ClayWidgetsPath, Root, ToolPath } from "@grafctory/specimen/index.core.js";
 import { render } from "preact";
 import "./index.css";
 

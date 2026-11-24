@@ -20,7 +20,7 @@
  * @module
  */
 
-import { More } from "@metreeca/clay-widgets/more";
+import { More } from "@grafctory/clay-widgets/more";
 import { useState } from "preact/hooks";
 
 

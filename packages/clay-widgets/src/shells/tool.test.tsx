@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Fetch, useFetch } from "@metreeca/clay/fetch";
+import { Fetch, useFetch } from "@grafctory/clay/fetch";
 import { type JSX, render } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { act } from "preact/test-utils";

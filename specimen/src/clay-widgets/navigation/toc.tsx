@@ -20,8 +20,8 @@
  * @module
  */
 
-import { TOC, type TOCEntries } from "@metreeca/clay-widgets/toc";
-import { Frame } from "@metreeca/specimen/clay-widgets/sample.js";
+import { TOC, type TOCEntries } from "@grafctory/clay-widgets/toc";
+import { Frame } from "@grafctory/specimen/clay-widgets/sample.js";
 import "../index.css";
 
 

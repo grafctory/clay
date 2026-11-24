@@ -23,7 +23,7 @@
  * @module
  */
 
-import { Stack } from "@metreeca/clay-widgets/stack";
+import { Stack } from "@grafctory/clay-widgets/stack";
 import { type ComponentChildren } from "preact";
 import "./index.css";
 

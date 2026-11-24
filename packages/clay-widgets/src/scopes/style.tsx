@@ -22,8 +22,8 @@
  * @module style
  */
 
-import { assert } from "@metreeca/core";
-import { css as compile, skin, type Token, type Tokens } from "@metreeca/skin";
+import { assert } from "@grafctory/core";
+import { css as compile, skin, type Token, type Tokens } from "@grafctory/skin";
 import { type ComponentChildren, createElement } from "preact";
 import "./style.css";
 
@@ -61,10 +61,10 @@ export type Looks = {
  * The same area sets the default {@link Looks look} of each kind of widget it holds, so a whole toolbar is quietened
  * at once, while a control stating a look of its own keeps that look whatever the area assigns.
  *
- * Tokens are named through the {@link @metreeca/skin!index.skin published contract} rather than as literal
+ * Tokens are named through the {@link @grafctory/skin!index.skin published contract} rather than as literal
  * strings, so a renamed token breaks the build instead of silently losing its styling; a token mapped to `undefined`
  * is left out, so a conditional override is expressed inline. A screen that already renders an element of its own
- * assigns the same tokens to it with {@link @metreeca/skin!index.css css}, sparing the extra wrapper; that helper
+ * assigns the same tokens to it with {@link @grafctory/skin!index.css css}, sparing the extra wrapper; that helper
  * knows no looks and sets no text, so such an element sets looks through the custom properties {@link Looks} names
  * and states `font-size` and the other text properties itself, reading the tokens it was given.
  *
@@ -88,7 +88,7 @@ export function Style({
 }: {
 
 	/**
-	 * The value each token takes inside the area, keyed by {@link @metreeca/skin!index.Token token name}, along with
+	 * The value each token takes inside the area, keyed by {@link @grafctory/skin!index.Token token name}, along with
 	 * the default {@link Looks look} of each kind of widget it holds; a token or a look left out or given `undefined`
 	 * keeps whatever the cascade already gives it. A value naming a token of the same kind stands for whatever that one
 	 * carries, so an area is set from the design system rather than from a literal.

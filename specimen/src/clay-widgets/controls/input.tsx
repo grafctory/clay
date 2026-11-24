@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Input } from "@metreeca/clay-widgets/input";
+import { Input } from "@grafctory/clay-widgets/input";
 import { useState } from "preact/hooks";
 import "../index.css";
 

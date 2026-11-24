@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Fieldset } from "@metreeca/clay-widgets/fieldset";
-import { Label } from "@metreeca/clay-widgets/label";
-import { Radio } from "@metreeca/clay-widgets/radio";
+import { Fieldset } from "@grafctory/clay-widgets/fieldset";
+import { Label } from "@grafctory/clay-widgets/label";
+import { Radio } from "@grafctory/clay-widgets/radio";
 import { useState } from "preact/hooks";
 import "../index.css";
 

@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Strip } from "@metreeca/clay-widgets/strip";
-import { Style } from "@metreeca/clay-widgets/style";
-import { Frame, Items } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Strip } from "@grafctory/clay-widgets/strip";
+import { Style } from "@grafctory/clay-widgets/style";
+import { Frame, Items } from "@grafctory/specimen/clay-widgets/sample.js";
 import "../index.css";
 
 

@@ -23,8 +23,8 @@
  * @module
  */
 
-import { TOC, type TOCEntry } from "@metreeca/clay-widgets/toc";
-import { assert } from "@metreeca/core";
+import { TOC, type TOCEntry } from "@grafctory/clay-widgets/toc";
+import { assert } from "@grafctory/core";
 import type { Element, Root as Tree } from "hast";
 import { headingRank } from "hast-util-heading-rank";
 import { toJsxRuntime } from "hast-util-to-jsx-runtime";

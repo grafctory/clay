@@ -20,7 +20,7 @@
  * @module
  */
 
-import { useFocus } from "@metreeca/clay/focus";
+import { useFocus } from "@grafctory/clay/focus";
 import { useId, useState } from "preact/hooks";
 import "../clay-widgets/index.css";
 

@@ -38,7 +38,7 @@ import "./heading.css";
  * so a page of headings reads like the rest of the page markup; a heading with no title renders nothing at all.
  *
  * The heading adds no landmark: the rank of its title alone places it in the page outline. A heading given an `id` is
- * a target for links, such as the entries of a {@link @metreeca/clay-widgets!toc.TOC table of contents}, and comes to
+ * a target for links, such as the entries of a {@link @grafctory/clay-widgets!toc.TOC table of contents}, and comes to
  * rest clear of any bar standing over the page when a link is followed, rather than hidden underneath it.
  *
  * @param options The widget configuration

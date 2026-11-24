@@ -20,11 +20,11 @@
  * @module
  */
 
-import { Checkbox } from "@metreeca/clay-widgets/checkbox";
-import { Input } from "@metreeca/clay-widgets/input";
-import { Label } from "@metreeca/clay-widgets/label";
-import { Select } from "@metreeca/clay-widgets/select";
-import { Switch } from "@metreeca/clay-widgets/switch";
+import { Checkbox } from "@grafctory/clay-widgets/checkbox";
+import { Input } from "@grafctory/clay-widgets/input";
+import { Label } from "@grafctory/clay-widgets/label";
+import { Select } from "@grafctory/clay-widgets/select";
+import { Switch } from "@grafctory/clay-widgets/switch";
 import "../index.css";
 
 

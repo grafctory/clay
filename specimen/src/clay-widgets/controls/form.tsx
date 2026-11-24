@@ -20,10 +20,10 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Form } from "@metreeca/clay-widgets/form";
-import { Input } from "@metreeca/clay-widgets/input";
-import { Label } from "@metreeca/clay-widgets/label";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Form } from "@grafctory/clay-widgets/form";
+import { Input } from "@grafctory/clay-widgets/input";
+import { Label } from "@grafctory/clay-widgets/label";
 import { useState } from "preact/hooks";
 import "../index.css";
 

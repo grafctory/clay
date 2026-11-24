@@ -20,10 +20,10 @@
  * @module
  */
 
-import { Card } from "@metreeca/clay-widgets/card";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Image } from "@metreeca/clay-widgets/image";
-import { Frame, landscape } from "@metreeca/specimen/clay-widgets/sample.js";
+import { Card } from "@grafctory/clay-widgets/card";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Image } from "@grafctory/clay-widgets/image";
+import { Frame, landscape } from "@grafctory/specimen/clay-widgets/sample.js";
 import "../index.css";
 
 

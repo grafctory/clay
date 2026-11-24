@@ -24,9 +24,9 @@
  * @module toc.core
  */
 
-import { type Optional } from "@metreeca/core";
-import { unique } from "@metreeca/core/arrays";
-import { createState } from "@metreeca/core/state";
+import { type Optional } from "@grafctory/core";
+import { unique } from "@grafctory/core/arrays";
+import { createState } from "@grafctory/core/state";
 
 
 /**

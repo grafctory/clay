@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InternalServerError, NetworkError, NotFound } from "@metreeca/http";
+import { InternalServerError, NetworkError, NotFound } from "@grafctory/http";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

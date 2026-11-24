@@ -20,10 +20,10 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Style } from "@metreeca/clay-widgets/style";
-import { Tabs } from "@metreeca/clay-widgets/tabs";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Style } from "@grafctory/clay-widgets/style";
+import { Tabs } from "@grafctory/clay-widgets/tabs";
 import "../index.css";
 
 

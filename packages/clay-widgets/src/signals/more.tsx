@@ -23,7 +23,7 @@
  * @module more
  */
 
-import { opt } from "@metreeca/core";
+import { opt } from "@grafctory/core";
 import { type ComponentChildren, createElement } from "preact";
 import { useEffect, useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";

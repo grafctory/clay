@@ -1,5 +1,5 @@
 {
-  "name": "@metreeca/specimen",
+  "name": "@grafctory/specimen",
   "version": "0.4.1",
   "type": "module",
   "engines": {
@@ -11,17 +11,17 @@
     "watch": "vite --open"
   },
   "dependencies": {
-    "@metreeca/clay": "file:../packages/clay",
-    "@metreeca/clay-markdown": "file:../packages/clay-markdown",
-    "@metreeca/clay-widgets": "file:../packages/clay-widgets",
-    "@metreeca/core": "^0.14.0",
-    "@metreeca/http": "^0.6.0",
-    "@metreeca/skin": "^0.3.0",
+    "@grafctory/clay": "file:../packages/clay",
+    "@grafctory/clay-markdown": "file:../packages/clay-markdown",
+    "@grafctory/clay-widgets": "file:../packages/clay-widgets",
+    "@grafctory/core": "^0.14.0",
+    "@grafctory/http": "^0.6.0",
+    "@grafctory/skin": "^0.3.0",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8"
   },
   "devDependencies": {
-    "@metreeca/rack": "^0.8.0",
+    "@grafctory/rack": "^0.8.0",
     "@preact/preset-vite": "^2.10.6",
     "typescript": "^6.0.3",
     "vite": "^8.3.5"

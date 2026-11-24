@@ -24,9 +24,9 @@
  * @module tabs.core
  */
 
-import { assert, isArray, isString, opt, type Optional } from "@metreeca/core";
-import { type Some, unique } from "@metreeca/core/arrays";
-import { createState } from "@metreeca/core/state";
+import { assert, isArray, isString, opt, type Optional } from "@grafctory/core";
+import { type Some, unique } from "@grafctory/core/arrays";
+import { createState } from "@grafctory/core/state";
 
 
 /**

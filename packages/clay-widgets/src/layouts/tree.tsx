@@ -23,8 +23,8 @@
  * @module tree
  */
 
-import { useModel } from "@metreeca/clay/model";
-import { createState } from "@metreeca/core/state";
+import { useModel } from "@grafctory/clay/model";
+import { createState } from "@grafctory/core/state";
 import { type ComponentChildren, createElement } from "preact";
 import { useId } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";

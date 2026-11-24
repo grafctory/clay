@@ -28,8 +28,8 @@
  * @module
  */
 
-import { eager, type Lazy } from "@metreeca/core";
-import { immutable } from "@metreeca/core/values";
+import { eager, type Lazy } from "@grafctory/core";
+import { immutable } from "@grafctory/core/values";
 import { useEffect, useState } from "preact/hooks";
 
 

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { difference, some, type Some, unique } from "@metreeca/core/arrays";
-import { createState } from "@metreeca/core/state";
-import { equals } from "@metreeca/core/values";
+import { difference, some, type Some, unique } from "@grafctory/core/arrays";
+import { createState } from "@grafctory/core/state";
+import { equals } from "@grafctory/core/values";
 
 
 export interface Selection<T> {

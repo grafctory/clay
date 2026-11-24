@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { css, skin } from "@metreeca/skin";
-import { type Entry } from "@metreeca/specimen/sample";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { css, skin } from "@grafctory/skin";
+import { type Entry } from "@grafctory/specimen/sample";
 import "./icon.css";
 
 

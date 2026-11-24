@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { Fetch as Client } from "@metreeca/http";
+import type { Fetch as Client } from "@grafctory/http";
 import { createElement, render } from "preact";
 import { act } from "preact/test-utils";
 import { afterEach, describe, expect, it, vi } from "vitest";

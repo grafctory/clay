@@ -20,8 +20,8 @@
  * @module
  */
 
-import { Button } from "@metreeca/clay-widgets/button";
-import { Board as BoardProvider, useBoard, usePosts } from "@metreeca/clay/board";
+import { Button } from "@grafctory/clay-widgets/button";
+import { Board as BoardProvider, useBoard, usePosts } from "@grafctory/clay/board";
 import "../clay-widgets/index.css";
 
 

@@ -1,15 +1,15 @@
 {
-  "name": "@metreeca/clay",
+  "name": "@grafctory/clay",
   "version": "0.4.1",
-  "description": "Preact contexts and hooks for @metreeca/clay.",
+  "description": "Preact contexts and hooks for @grafctory/clay.",
   "keywords": [
     "typescript",
     "preact",
     "ui"
   ],
-  "homepage": "https://metreeca.github.io/clay/",
+  "homepage": "https://grafctory.github.io/clay/",
   "bugs": {
-    "url": "https://github.com/metreeca/clay/issues",
+    "url": "https://github.com/grafctory/clay/issues",
     "email": "info@metreeca.com"
   },
   "license": "Apache-2.0",
@@ -20,46 +20,46 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/metreeca/clay.git",
+    "url": "git+https://github.com/grafctory/clay.git",
     "directory": "packages/clay"
   },
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
-      "@metreeca/source": "./src/index.ts",
+      "@grafctory/source": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./asset": {
-      "@metreeca/source": "./src/asset.ts",
+      "@grafctory/source": "./src/asset.ts",
       "default": "./dist/asset.js"
     },
     "./board": {
-      "@metreeca/source": "./src/board.ts",
+      "@grafctory/source": "./src/board.ts",
       "default": "./dist/board.js"
     },
     "./fetch": {
-      "@metreeca/source": "./src/fetch.ts",
+      "@grafctory/source": "./src/fetch.ts",
       "default": "./dist/fetch.js"
     },
     "./model": {
-      "@metreeca/source": "./src/model.ts",
+      "@grafctory/source": "./src/model.ts",
       "default": "./dist/model.js"
     },
     "./router": {
-      "@metreeca/source": "./src/router.ts",
+      "@grafctory/source": "./src/router.ts",
       "default": "./dist/router.js"
     },
     "./focus": {
-      "@metreeca/source": "./src/focus.ts",
+      "@grafctory/source": "./src/focus.ts",
       "default": "./dist/focus.js"
     },
     "./storage": {
-      "@metreeca/source": "./src/storage.ts",
+      "@grafctory/source": "./src/storage.ts",
       "default": "./dist/storage.js"
     },
     "./transfer": {
-      "@metreeca/source": "./src/transfer.ts",
+      "@grafctory/source": "./src/transfer.ts",
       "default": "./dist/transfer.js"
     },
     "./*.core": null
@@ -78,8 +78,8 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@metreeca/core": "^0.14.0",
-    "@metreeca/http": "^0.6.0"
+    "@grafctory/core": "^0.14.0",
+    "@grafctory/http": "^0.6.0"
   },
   "devDependencies": {
     "happy-dom": "^21.0.4",

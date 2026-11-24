@@ -39,7 +39,7 @@
  * Give it a factory, which may share the interface name, as types and values live in separate namespaces:
  *
  * ```typescript
- * import { createState } from "@metreeca/core/state";
+ * import { createState } from "@grafctory/core/state";
  *
  * function Counter() {
  *   return createState<Counter>({
@@ -102,9 +102,9 @@
  * @module
  */
 
-import { eager, type Lazy } from "@metreeca/core";
-import { type Instance, manageState, type State } from "@metreeca/core/state";
-import { equals } from "@metreeca/core/values";
+import { eager, type Lazy } from "@grafctory/core";
+import { type Instance, manageState, type State } from "@grafctory/core/state";
+import { equals } from "@grafctory/core/values";
 import { useState } from "preact/hooks";
 
 

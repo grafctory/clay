@@ -20,9 +20,9 @@
  * @module
  */
 
-import { Choice } from "@metreeca/clay-widgets/choice";
-import { Icon } from "@metreeca/clay-widgets/icon";
-import { Style } from "@metreeca/clay-widgets/style";
+import { Choice } from "@grafctory/clay-widgets/choice";
+import { Icon } from "@grafctory/clay-widgets/icon";
+import { Style } from "@grafctory/clay-widgets/style";
 import { useState } from "preact/hooks";
 import "../index.css";
 

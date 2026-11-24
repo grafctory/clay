@@ -20,7 +20,7 @@
  * @module
  */
 
-import { Note } from "@metreeca/clay-widgets/note";
+import { Note } from "@grafctory/clay-widgets/note";
 import "../index.css";
 
 

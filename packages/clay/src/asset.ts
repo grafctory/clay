@@ -23,7 +23,7 @@
  * @module
  */
 
-import { getMedia, NetworkError } from "@metreeca/http";
+import { getMedia, NetworkError } from "@grafctory/http";
 import { useEffect, useState } from "preact/hooks";
 import { useFetch } from "./fetch.js";
 
@@ -47,8 +47,8 @@ import { useFetch } from "./fetch.js";
  * @param path The path of the asset, resolved against the current location
  *
  * @returns The text of the asset, or `undefined` while it is being retrieved; if the asset cannot be retrieved, the
- *     status code of the response, such as {@link @metreeca/http!NotFound NotFound} for a missing asset, or
- *     {@link @metreeca/http!NetworkError NetworkError} if no server answered at all
+ *     status code of the response, such as {@link @grafctory/http!NotFound NotFound} for a missing asset, or
+ *     {@link @grafctory/http!NetworkError NetworkError} if no server answered at all
  */
 export function useAsset(path: string): undefined | number | string {
 
