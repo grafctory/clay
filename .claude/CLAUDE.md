@@ -11,8 +11,8 @@
 
 # Overview
 
-Metreeca Clay is the general-purpose component layer of the Metreeca stack: the app-wide services, widgets, layouts and
-movable items an interface is assembled from, with no commitment to a data model. The monorepo collects the
+Grafctory Clay is the general-purpose component layer of the Grafctory stack: the app-wide services, widgets, layouts
+and movable items an interface is assembled from, with no commitment to a data model. The monorepo collects the
 rendering-layer packages, each sitting directly under `packages/` (for example `packages/clay/`).
 
 Clay **NEVER** depends on `@grafctory/blue`, `@grafctory/qest` or `@grafctory/keep`: a component needing a shape or a query
@@ -72,7 +72,7 @@ what it imports.
 	components are adopted one by one, which a toolkit of this size does not see.
 - **Heavy stacks apart**: a module group gets a package of its own when it is the only reason its neighbours would
 	install a third-party stack. `clay-markdown` carries the Markdown processing pipeline, keeping the widget core down to
-	Preact, the glyph catalogue and the Metreeca foundations.
+	Preact, the glyph catalogue and the Grafctory foundations.
 - **Glyphs inside**: the `icon` module stays in `clay-widgets`. It is a role mapping over a glyph catalogue taken as a
 	peer dependency, so a package of its own would spare nothing: every widget package needs it, and the catalogue reaches
 	every widget consumer either way.
@@ -128,7 +128,7 @@ contract or a theming question:
 	variant through tokens, a Clay component solving it through props is a tell worth questioning
 
 Upstream precedent is an argument, never a mandate. Ideas travel freely, while prose, tables and figures stay upstream:
-link them, never reproduce them, and write whatever is borrowed in the Metreeca register.
+link them, never reproduce them, and write whatever is borrowed in the Grafctory register.
 
 # Component State
 

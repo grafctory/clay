@@ -10,13 +10,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/grafctory/clay/compare/v0.4.1...HEAD)
 
-## [0.4.1](https://github.com/metreeca/clay/compare/v0.4.0...v0.4.1) - 2026-11-24
+## [0.4.1](https://github.com/grafctory/clay/compare/v0.4.0...v0.4.1) - 2026-11-24
 
 ### Changed
 
 - Maintenance release with no change to the published API or behaviour
 
-## [0.4.0](https://github.com/metreeca/clay/compare/v0.3.0...v0.4.0) - 2026-11-20
+## [0.4.0](https://github.com/grafctory/clay/compare/v0.3.0...v0.4.0) - 2026-11-20
 
 ### Added
 
@@ -33,7 +33,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - **Breaking**: `@metreeca/clay-widgets/tool` - a page shows a single Tool shell at a time, as the shell boxes now
   carry fixed ids; a page nesting a second shell, as a preview pane might, lays its content out without one instead
 
-## [0.3.0](https://github.com/metreeca/clay/compare/v0.2.1...v0.3.0) - 2026-11-19
+## [0.3.0](https://github.com/grafctory/clay/compare/v0.2.1...v0.3.0) - 2026-11-19
 
 ### Changed
 
@@ -41,14 +41,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   copy of it and every widget reads the router, client and status the app sets up; apps declare `@metreeca/clay`
   among their own dependencies, as they already do to set up the contexts the widgets read
 
-## [0.2.1](https://github.com/metreeca/clay/compare/v0.2.0...v0.2.1) - 2026-11-18
+## [0.2.1](https://github.com/grafctory/clay/compare/v0.2.0...v0.2.1) - 2026-11-18
 
 ### Fixed
 
 - `@metreeca/clay-widgets/icon` - glyphs keep their text-height sizing in production builds of consuming apps, where
   they were drawn at the 24px Lucide default because the bundler dropped the stylesheet sizing them to their text
 
-## [0.2.0](https://github.com/metreeca/clay/compare/v0.1.0...v0.2.0) - 2026-11-18
+## [0.2.0](https://github.com/grafctory/clay/compare/v0.1.0...v0.2.0) - 2026-11-18
 
 ### Added
 
@@ -67,7 +67,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `@metreeca/clay-widgets/tool` - the shell follows the viewport across the two-column threshold without flooding the
   console with resize loop notices as the window is resized, keeping the error logs of an app free of spurious entries
 
-## [0.1.0](https://github.com/metreeca/clay/releases/tag/v0.1.0) - 2026-11-17
+## [0.1.0](https://github.com/grafctory/clay/releases/tag/v0.1.0) - 2026-11-17
 
 Initial release of a minimalist UI toolkit for Preact apps: interfaces are composed in JSX from accessible widgets that
 commit to no data model, their behaviour kept in `@metreeca/core` state objects tested without a DOM, and their looks
