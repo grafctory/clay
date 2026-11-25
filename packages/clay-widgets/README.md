@@ -1,8 +1,13 @@
 # @grafctory/clay-widgets
 
-[![npm](https://img.shields.io/npm/v/@grafctory/clay-widgets)](https://www.npmjs.com/package/@grafctory/clay-widgets)
+[![npm][npm-badge]][npm] [![Grafctory][grafctory-badge]][grafctory]
 
-Preact interface components for [@grafctory/clay](https://github.com/grafctory/clay).
+[npm-badge]: https://img.shields.io/npm/v/@grafctory/clay-widgets
+[npm]: https://www.npmjs.com/package/@grafctory/clay-widgets
+[grafctory-badge]: https://img.shields.io/badge/part%20of-Grafctory-blue
+[grafctory]: https://github.com/grafctory
+
+Preact interface components for [@grafctory/clay].
 
 The components an interface is assembled from: buttons, forms with their labels, fields and field groups, links and
 icons, the app logo, text runs, tags and captioned images, notices and placeholders, breadcrumb trails and incremental
@@ -12,7 +17,10 @@ and keyboard helpers, and marked with the same role-named glyphs, behaves and lo
 restating their keyboard handling or visual vocabulary, so a screen mixing both reads and responds as one interface.
 
 Styling is structural only: what a widget needs to work, with colour, type and spacing left to
-[@grafctory/skin](https://github.com/grafctory/skin) or to whoever styles the app.
+[@grafctory/skin] or to whoever styles the app.
+
+[@grafctory/clay]: https://github.com/grafctory/clay
+[@grafctory/skin]: https://github.com/grafctory/skin
 
 # Installation
 
@@ -45,3 +53,5 @@ npm install lucide-preact           # peer dependency
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/clay?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>

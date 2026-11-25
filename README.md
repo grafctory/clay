@@ -2,7 +2,8 @@
 
 Minimalist UI toolkit for Preact.
 
-Interfaces are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services:
+**@grafctory/clay** is the UI module of the [Grafctory][grafctory] model-driven knowledge graph framework. Interfaces
+are composed in JSX from general-purpose widgets, layouts and movable items, wired to app-wide services:
 
 - **Accessible Widgets**: keyboard paths, focus handling and screen reader announcements designed to WCAG 2.2 AA
 - **Model-Agnostic Components**: no commitment to a data model, so an app feeds them whatever data it handles
@@ -11,6 +12,8 @@ Interfaces are composed in JSX from general-purpose widgets, layouts and movable
 
 Components read their colours, faces and spacing from the [@grafctory/skin] token contract. Its stylesheet is optional:
 components work without it, and follow the platform colour scheme and the app branding with it.
+
+[grafctory]: https://github.com/grafctory
 
 # Installation
 
@@ -59,3 +62,5 @@ An app brands the [@grafctory/skin] stylesheet by overriding its tokens: its
 
 This project is licensed under the Apache 2.0 License –
 see [LICENSE](https://github.com/grafctory/clay?tab=Apache-2.0-1-ov-file) file for details.
+
+<sub>Grafctory™ is a trademark of Metreeca srl.</sub>
