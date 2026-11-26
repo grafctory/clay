@@ -27,7 +27,7 @@ import { useModel } from "@grafctory/clay/model";
 import { createState } from "@grafctory/core/state";
 import { equals } from "@grafctory/core/values";
 import { skin } from "@grafctory/skin";
-import { type ComponentChildren, createElement, type TargetedEvent, type TargetedMouseEvent } from "preact";
+import { type ComponentChildren, createElement, type TargetedEvent, type TargetedFocusEvent, type TargetedMouseEvent } from "preact";
 import { useEffect } from "preact/hooks";
 import { Icon } from "../glyphs/icon.js";
 import "./tool.css";
@@ -38,6 +38,11 @@ import "./tool.css";
  * body again on a history traversal and returns it to the position the reader left it at.
  */
 const Id = "clay-tool";
+
+/**
+ * The id of the main body, which takes the focus the main column passes on and scrolls back to its top on a new gist.
+ */
+const Body = `${Id}-body`;
 
 /**
  * The delay a change of `busy` waits out before the frame shows it (ms).
@@ -94,7 +99,8 @@ const Ignored = Object.fromEntries([
  *
  * The main column is named after `head` and takes the focus as the {@link @grafctory/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
- * The main body then opens at its top, or on the element a link targets, set below the head at the gutter of the
+ * The column hands that focus on to the main body, so the keys scroll the content at once, while a control inside the
+ * column keeps the focus it takes. The main body then opens at its top, or on the element a link targets, set below the head at the gutter of the
  * body, as it stands before any scrolling. The side body keeps its place, so a reader never loses their position in it.
  * A screen replacing its content without a landing, as a catalogue does on a change of filters, states it through the
  * `gist`, and the main body opens at its top again, so the reader never lands halfway down a list they have not read.
@@ -269,8 +275,6 @@ export function Tool({
 
 	const title = head ? `${Id}-title` : undefined;
 
-	const body = `${Id}-body`;
-
 	const { waiting, settle } = useModel(() => createState<Waiting>({
 
 		waiting: false,
@@ -298,6 +302,8 @@ export function Tool({
 
 		if ( locked ) {
 			release(document.getElementById(side));
+		} else {
+			// an unlocked side column keeps the focus where the reader left it
 		}
 
 	}, [locked]);
@@ -318,7 +324,9 @@ export function Tool({
 	useEffect(() => {
 
 		if ( track(gist).changes > changes ) {
-			document.getElementById(body)?.scrollTo(0, 0);
+			document.getElementById(Body)?.scrollTo(0, 0);
+		} else {
+			// the same content keeps the reader where they are
 		}
 
 	}, [gist]);
@@ -380,7 +388,6 @@ export function Tool({
 		 * dismisses it on Escape and on a click outside, exposes the expanded state of the button opening it, and
 		 * returns focus to that button as it closes. Locking takes it out of reach for every gesture at once. While the
 		 * drawer is open the main column it covers is out of reach as well, so focus never lands out of sight under it.
-		 * Each body takes the focus, so a keyboard scrolls it in every browser, holding focusable content or not.
 		 *
 		 * The drawer is named after the button opening it, so a reader hears what has opened. A locked side column is
 		 * taken out of light dismiss: the switch closes a drawer left open, and no menu button is left to reopen it.
@@ -408,7 +415,7 @@ export function Tool({
 				{meta && <div class="meta">{meta}</div>}
             </header>
 
-            <div tabIndex={0}>
+            <div>
                 <div>{tray}</div>
             </div>
 			{more && <footer>{more}</footer>}
@@ -417,15 +424,16 @@ export function Tool({
 
 		{/*
 		 * The main column takes the focus from code alone, so a navigation can land the focus on it and a reader hears
-		 * its name, taken from the head, without a tab stop being added. The head is held in a box of its own, both
-		 * to be referenced as that name and to lay what it holds out as a row filling the main head up to the menu.
+		 * its name, taken from the head, without a tab stop being added. The column hands that focus on to its body,
+		 * so the keys scroll the content, while a control inside keeps the focus it takes. The head is held in a box
+		 * of its own, to serve as that name and to lay what it holds out as a row filling the main head up to the menu.
 		 *
 		 * Where two columns do not fit, the mark of the side column joins the main head, in a box of its own so it is
 		 * locked along with the side column. The head then opens the body instead, scrolling away with the content
 		 * below it, unless a locked side column keeps it in the main head, apart from the menu as on a wide viewport.
 		 */}
 
-		<main id={`${Id}-main`} aria-labelledby={title} tabIndex={-1} inert={open}>
+		<main id={`${Id}-main`} aria-labelledby={title} tabIndex={-1} inert={open} onFocus={relay}>
 
 			<header>
 				{!tucked && !locked && <button type="button" popovertarget={side} aria-label="Open menu">
@@ -445,7 +453,7 @@ export function Tool({
 
 			</header>
 
-			<div id={body} tabIndex={0}>
+			<div id={Body} tabIndex={-1}>
 				{!headed && head && <header id={title}>{head}</header>}
 				<div>{children}</div>
 				{copy && <footer>{copy}</footer>}
@@ -477,7 +485,7 @@ interface Waiting {
 	/**
 	 * Whether the frame is veiled, shows the turning glyph and announces waiting to screen readers.
 	 */
-	readonly waiting: boolean;
+	readonly waiting: boolean
 
 	/**
 	 * Records waiting as started or ended.
@@ -486,7 +494,7 @@ interface Waiting {
 	 *
 	 * @returns The waiting state as it now stands
 	 */
-	settle(waiting: boolean): Waiting;
+	settle(waiting: boolean): Waiting
 
 }
 
@@ -498,12 +506,12 @@ interface Content {
 	/**
 	 * The gist of what the main body shows.
 	 */
-	readonly gist: unknown;
+	readonly gist: unknown
 
 	/**
 	 * How many times the gist has changed since the shell was first shown.
 	 */
-	readonly changes: number;
+	readonly changes: number
 
 	/**
 	 * Records the gist of what the main body now shows.
@@ -512,7 +520,7 @@ interface Content {
 	 *
 	 * @returns The content as it now stands, unchanged if `gist` equals the last one by content
 	 */
-	track(gist: unknown): Content;
+	track(gist: unknown): Content
 
 }
 
@@ -524,7 +532,7 @@ interface Drawer {
 	/**
 	 * Whether the side column is on show as a drawer over the main column.
 	 */
-	readonly open: boolean;
+	readonly open: boolean
 
 	/**
 	 * Records the drawer as opened or closed.
@@ -533,7 +541,7 @@ interface Drawer {
 	 *
 	 * @returns The drawer as it now stands
 	 */
-	toggle(open: boolean): Drawer;
+	toggle(open: boolean): Drawer
 
 }
 
@@ -545,14 +553,14 @@ interface Viewport {
 	/**
 	 * Whether the side column stands beside the main one rather than as a drawer over it.
 	 */
-	readonly split: boolean;
+	readonly split: boolean
 
 	/**
 	 * Reads the viewport again, once the window is resized.
 	 *
 	 * @returns The viewport as it now stands
 	 */
-	sync(): Viewport;
+	sync(): Viewport
 
 }
 
@@ -589,6 +597,22 @@ function opened(event: TargetedEvent<HTMLElement>): boolean {
 function reveal(event: TargetedEvent<HTMLElement>): void {
 	if ( opened(event) ) {
 		event.currentTarget.querySelector<HTMLElement>(":scope > header > button")?.focus();
+	} else {
+		// the platform returns the focus to the menu button as the drawer closes
+	}
+}
+
+/**
+ * Passes the focus the main column takes on to its body, so the keys scroll the content while a screen reader still
+ * announces the landmark entered. The body takes no tab stop: the focus reaches it from code alone, as on a navigation.
+ *
+ * @param event The focus the main column or an element inside it took
+ */
+function relay(event: TargetedFocusEvent<HTMLElement>): void {
+	if ( event.target === event.currentTarget ) {
+		document.getElementById(Body)?.focus({ preventScroll: true });
+	} else {
+		// a control inside the main column keeps the focus it took
 	}
 }
 
@@ -603,6 +627,8 @@ function release(column: HTMLElement | null): void {
 
 	if ( control instanceof HTMLElement && column?.contains(control) ) {
 		control.blur();
+	} else {
+		// the focus rests outside the column
 	}
 
 }
@@ -626,5 +652,7 @@ function ignore(event: Event): void {
 function follow(event: TargetedMouseEvent<HTMLElement>): void {
 	if ( event.target instanceof Element && event.target.closest("a[href]") ) {
 		event.currentTarget.togglePopover(false);
+	} else {
+		// a click elsewhere in the drawer leaves it open
 	}
 }

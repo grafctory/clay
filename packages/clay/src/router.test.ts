@@ -601,6 +601,28 @@ describe("Router", () => {
 
 		});
 
+		it("should leave the focus where the main landmark passes it on within itself", async () => {
+
+			const forward = ({ target, currentTarget }: FocusEvent) => target === currentTarget && currentTarget instanceof HTMLElement
+				? currentTarget.querySelector<HTMLElement>("div")?.focus()
+				: undefined;
+
+			mount({
+				"/": createElement("a", { href: "/other" }, "link"),
+				"/other": createElement<JSX.HTMLAttributes<HTMLElement>>("main", { tabIndex: -1, onFocus: forward },
+					createElement<JSX.HTMLAttributes<HTMLDivElement>>("div", { tabIndex: -1 }, "other")
+				)
+			});
+
+			document.querySelector("a")?.focus();
+
+			await act(async () => document.querySelector("a")?.click());
+
+			expect(document.activeElement?.localName).toBe("div");
+			expect(document.activeElement?.textContent).toBe("other");
+
+		});
+
 		it("should clear the focus when following a link to a page with no main landmark", async () => {
 
 			shell([

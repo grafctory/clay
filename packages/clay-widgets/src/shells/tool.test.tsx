@@ -611,12 +611,33 @@ describe("Tool", () => {
 
 	describe("bodies", () => {
 
-		it("lets the keyboard reach and scroll each body", async () => {
+		it("keeps the bodies out of the tab order", async () => {
 
 			const tool = rendered(<Tool tray={<p>tray</p>}>content</Tool>);
 
-			expect(tool.querySelector<HTMLElement>(":scope > aside > div")?.tabIndex).toBe(0);
-			expect(tool.querySelector<HTMLElement>(":scope > main > div")?.tabIndex).toBe(0);
+			expect(tool.querySelector(":scope > aside > div")?.hasAttribute("tabindex")).toBe(false);
+			expect(tool.querySelector(":scope > main > div")?.getAttribute("tabindex")).toBe("-1");
+
+		});
+
+		it("hands the focus the main column takes to its body, so the keys scroll the content", async () => {
+
+			const tool = rendered(<Tool>content</Tool>);
+
+			act(() => tool.querySelector<HTMLElement>(":scope > main")?.focus());
+
+			expect(document.activeElement).toBe(tool.querySelector(":scope > main > div"));
+
+		});
+
+		it("leaves the focus on a control inside the main column", async () => {
+
+			const tool = rendered(<Tool><input/></Tool>);
+			const field = tool.querySelector<HTMLElement>(":scope > main input")!;
+
+			act(() => field.focus());
+
+			expect(document.activeElement).toBe(field);
 
 		});
 
@@ -831,17 +852,17 @@ describe("Tool", () => {
 
 			const tool = rendered(<Tool>content</Tool>);
 			const aside = side(tool)!;
-			const main = tool.querySelector<HTMLElement>(":scope > main")!;
+			const body = tool.querySelector<HTMLElement>(":scope > main > div")!;
 
 			const toggle = (state: "open" | "closed") => act(async () => {
 				aside.dispatchEvent(Object.assign(new Event("toggle"), { newState: state }));
 			});
 
-			main.focus();
+			body.focus();
 
 			await toggle("closed");
 
-			expect(document.activeElement).toBe(main);
+			expect(document.activeElement).toBe(body);
 
 			await toggle("open");
 

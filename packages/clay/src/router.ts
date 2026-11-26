@@ -312,7 +312,7 @@ export interface Router {
 		 */
 		state?: unknown
 
-	}): void;
+	}): void
 
 }
 
@@ -366,7 +366,8 @@ export interface Router {
  *   does, keeps the reader in place on whatever they were reading before following it
  * - a page landed afresh also moves the focus to its `main` landmark, so a screen reader announces the page arrived
  *   on; the landmark takes the focus only if it is focusable, as a `tabindex` of `-1` makes it without adding a tab
- *   stop; otherwise the focus is cleared, so the next keystroke never acts on a control of the page left behind
+ *   stop, and may pass it on to an element within itself, such as the box scrolling its content; otherwise the focus
+ *   is cleared, so the next keystroke never acts on a control of the page left behind
  * - a link to another site opens in a new browsing context
  * - an image outside any link toggles its `active` attribute, which the `@grafctory/skin` stylesheet reads to show it
  *   over the whole viewport; an image inside a link is left to the link
@@ -400,8 +401,6 @@ export function Router({
 	}));
 
 	const { route, annex, query } = parse(place);
-
-	const sync = () => update(true);
 
 	// document.title lives outside the rendered tree, so it follows the title once rendered
 
@@ -448,15 +447,24 @@ export function Router({
 
 			target?.scrollIntoView();
 
-			// the focus lands on the content, or nowhere, rather than on a control of the page left behind
+			/*
+			 * The focus lands on the content, or nowhere, rather than on a control of the page left behind. A landmark is
+			 * focusable through its tabindex alone, so one without it leaves a control it holds to be cleared as well.
+			 */
 
-			main?.focus({ preventScroll: true });
+			const content = main?.hasAttribute("tabindex") ? main : undefined;
 
-			if ( document.activeElement !== main && document.activeElement instanceof HTMLElement ) {
+			content?.focus({ preventScroll: true });
+
+			if ( !content?.contains(document.activeElement) && document.activeElement instanceof HTMLElement ) {
 				document.activeElement.blur();
 			} else {
 				// the focus already rests on the content, or on nothing
 			}
+
+		} else {
+
+			// no link followed yet
 
 		}
 
@@ -513,10 +521,12 @@ export function Router({
 
 					} finally {
 
-						sync();
+						update(true);
 
 						if ( lands(before, here()) ) {
 							setLanding({ hash: new URL(href).hash });
+						} else {
+							// a change of query or annex alone keeps the reader in place
 						}
 
 					}
@@ -594,7 +604,7 @@ export function Router({
 
 			const key = navigations()?.currentEntry?.key;
 
-			sync();
+			update(true);
 
 			if ( isDefined(key) ) {
 				setTraversal({ key });
@@ -605,7 +615,7 @@ export function Router({
 		}
 
 
-		sync(); // catches up with a location changed before the listeners were in place
+		update(true); // catches up with a location changed before the listeners were in place
 
 		navigations()?.addEventListener("navigate", leave);
 
@@ -829,23 +839,25 @@ export function Routes({
 	/**
 	 * Follows the redirections of the table from a section route carrying its annex.
 	 *
+	 * @param section The section route to start from
+	 * @param trail The routes already followed to reach `section`, a loop being detected as a return to one of them
+	 *
 	 * @returns The route the redirections lead to, the section route itself if it is not redirected
+	 *
+	 * @throws {@link !Error Error} If the redirections lead back to a route already followed
 	 */
-	function settle(section: string): string {
+	function settle(section: string, trail: readonly string[] = []): string {
 
-		const trail = [section]; // the routes visited so far, grown as each redirection is followed
+		const visited = [...trail, section];
+		const route = redirect(section);
 
-		for (let route = redirect(section); isDefined(route); route = redirect(route)) {
-
-			if ( trail.includes(route) ) {
-				throw new Error(`redirection loop <${trail.join(",")}>`);
-			}
-
-			trail.push(route);
-
+		if ( !isDefined(route) ) {
+			return section;
+		} else if ( visited.includes(route) ) {
+			throw new Error(`redirection loop <${visited.join(",")}>`);
+		} else {
+			return settle(route, visited);
 		}
-
-		return trail.at(-1) ?? section;
 
 	}
 
