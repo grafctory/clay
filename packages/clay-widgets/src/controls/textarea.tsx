@@ -25,6 +25,7 @@
 
 import { createElement } from "preact";
 import { useLayoutEffect, useRef } from "preact/hooks";
+import { report } from "../index.core.js";
 import "./textarea.css";
 
 
@@ -59,6 +60,8 @@ export function Textarea({
 	disabled,
 	readonly,
 	required,
+
+	autocomplete,
 
 	minLength,
 	maxLength,
@@ -105,6 +108,16 @@ export function Textarea({
 	 * Whether the field fails its constraints while empty; optional if omitted.
 	 */
 	required?: boolean
+
+	/**
+	 * The purpose of the value, as one of the [autofill names][autofill] the platform defines, such as
+	 * `street-address`; none if omitted. The browser offers the data it keeps for that purpose, and assistive
+	 * technology states what the field asks for. WCAG SC 1.3.5 requires one on any field asking readers about
+	 * themselves, so that a reader is spared typing what the browser already knows.
+	 *
+	 * [autofill]: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill-field
+	 */
+	autocomplete?: string
 
 	/**
 	 * The least number of characters a non-empty value holds; no floor if omitted.
@@ -186,6 +199,8 @@ export function Textarea({
 		aria-label={name}
 		aria-describedby={description}
 
+		autocomplete={autocomplete}
+
 		minLength={minLength}
 		maxLength={maxLength}
 
@@ -201,14 +216,4 @@ export function Textarea({
 
 	/>);
 
-}
-
-
-/**
- * Sets the custom message of a field to the error given while the field fails its own constraints, and clears it
- * otherwise, so the message names the rule a failing value breaks but never decides whether the field is valid.
- */
-function report(field: HTMLTextAreaElement, error: undefined | string): void {
-	field.setCustomValidity("");
-	field.setCustomValidity(error === undefined || field.validity.valid ? "" : error);
 }

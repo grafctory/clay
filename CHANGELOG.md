@@ -14,6 +14,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `@grafctory/clay-widgets/card` - the `--clay-card-image-ratio` knob retunes the side column of a card given a number
   of lines to the proportions of its pictures, landscape by default, so square or portrait pictures fill it as well
+- `@grafctory/clay-widgets/input` - the `autocomplete` prop declares the purpose of the value, such as an email address,
+  so the browser offers the data it keeps for it and a field asking readers about themselves meets WCAG SC 1.3.5
+- `@grafctory/clay-widgets/select` - the `autocomplete` prop declares the purpose of the value, such as a country, so
+  the browser picks the option it keeps for it and a menu asking readers about themselves meets WCAG SC 1.3.5
+- `@grafctory/clay-widgets/textarea` - the `autocomplete` prop declares the purpose of the value, such as a postal
+  address, so the browser offers the data it keeps and a field asking readers about themselves meets WCAG SC 1.3.5
 
 ### Fixed
 

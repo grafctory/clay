@@ -58,6 +58,19 @@ describe("Input", () => {
 
 		});
 
+		it("declares the purpose given", async () => {
+
+			expect(mount(<Input autocomplete="shipping street-address"/>)?.getAttribute("autocomplete"))
+				.toBe("shipping street-address");
+
+		});
+
+		it("declares no purpose by default", async () => {
+
+			expect(mount(<Input/>)?.hasAttribute("autocomplete")).toBe(false);
+
+		});
+
 		it("names the field as given", async () => {
 
 			expect(mount(<Input name="Title"/>)?.getAttribute("aria-label")).toBe("Title");

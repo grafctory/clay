@@ -25,6 +25,7 @@
 
 import { createElement } from "preact";
 import { useLayoutEffect, useRef, useState } from "preact/hooks";
+import { report } from "../index.core.js";
 import "./input.css";
 
 
@@ -53,10 +54,12 @@ export function Input({
 	description,
 
 	disabled,
+	grow = false,
 	readonly,
 	required,
 
 	type = "text",
+	autocomplete,
 
 	min,
 	max,
@@ -66,7 +69,6 @@ export function Input({
 	pattern,
 	error,
 
-	grow = false,
 	size,
 
 	placeholder,
@@ -99,6 +101,14 @@ export function Input({
 	disabled?: boolean
 
 	/**
+	 * Whether the field spans the column holding it, or the room left on its line in a {@link strip!Strip Strip};
+	 * sized to `size` characters if omitted. A growing field of any type takes that whole room, so a long value such as
+	 * an address stays in view. A field wrapped in a {@link label!Label Label} is bounded by the room the label takes
+	 * instead, so spanning the column, or the room beside the label text, takes a label told to grow.
+	 */
+	grow?: boolean
+
+	/**
 	 * Whether the field shows its value without taking edits, while staying in the tab order; editable if omitted.
 	 */
 	readonly?: boolean
@@ -117,6 +127,16 @@ export function Input({
 	// Kept in sync with the date and time types the empty pattern rule in input.css colours as a placeholder.
 	type?: "text" | "email" | "url" | "tel" | "password" | "number"
 		| "date" | "time" | "datetime-local" | "month" | "week"
+
+	/**
+	 * The purpose of the value, as one of the [autofill names][autofill] the platform defines, such as `email` or
+	 * `shipping street-address`; none if omitted. The browser offers the data it keeps for that purpose, and assistive
+	 * technology states what the field asks for. WCAG SC 1.3.5 requires one on any field asking readers about
+	 * themselves, so that a reader is spared typing what the browser already knows.
+	 *
+	 * [autofill]: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill-field
+	 */
+	autocomplete?: string
 
 	/**
 	 * The least value a `number` field or a date or time field accepts, written as its values are; none if omitted.
@@ -156,14 +176,6 @@ export function Input({
 	 * the field or the {@link form!Form Form} around it is valid, which the constraints alone decide.
 	 */
 	error?: string
-
-	/**
-	 * Whether the field spans the column holding it, or the room left on its line in a {@link strip!Strip Strip};
-	 * sized to `size` characters if omitted. A growing field of any type takes that whole room, so a long value such as
-	 * an address stays in view. A field wrapped in a {@link label!Label Label} is bounded by the room the label takes
-	 * instead, so spanning the column, or the room beside the label text, takes a label told to grow.
-	 */
-	grow?: boolean
 
 	/**
 	 * The width the field stands at, in characters, never wider than the column holding it; a `number` field or a
@@ -230,6 +242,7 @@ export function Input({
 		aria-label={name}
 		aria-describedby={description}
 		type={type}
+		autocomplete={autocomplete}
 
 		min={min}
 		max={max}
@@ -251,14 +264,4 @@ export function Input({
 
 	/>);
 
-}
-
-
-/**
- * Sets the custom message of a field to the error given while the field fails its own constraints, and clears it
- * otherwise, so the message names the rule a failing value breaks but never decides whether the field is valid.
- */
-function report(field: HTMLInputElement, error: undefined | string): void {
-	field.setCustomValidity("");
-	field.setCustomValidity(error === undefined || field.validity.valid ? "" : error);
 }

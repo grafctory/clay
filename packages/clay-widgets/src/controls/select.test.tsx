@@ -65,6 +65,19 @@ describe("Select", () => {
 
 		});
 
+		it("declares the purpose given", async () => {
+
+			expect(mount(<Select autocomplete="country" options={countries}/>)?.getAttribute("autocomplete"))
+				.toBe("country");
+
+		});
+
+		it("declares no purpose by default", async () => {
+
+			expect(mount(<Select options={countries}/>)?.hasAttribute("autocomplete")).toBe(false);
+
+		});
+
 		it("offers the options in order, labelled as given", async () => {
 
 			const select = mount(<Select options={countries}/>);

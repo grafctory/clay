@@ -73,6 +73,18 @@ describe("Textarea", () => {
 
 		});
 
+		it("declares the purpose given", async () => {
+
+			expect(mount(<Textarea autocomplete="street-address"/>)?.getAttribute("autocomplete")).toBe("street-address");
+
+		});
+
+		it("declares no purpose by default", async () => {
+
+			expect(mount(<Textarea/>)?.hasAttribute("autocomplete")).toBe(false);
+
+		});
+
 		it("states its constraints", async () => {
 
 			const textarea = mount(<Textarea minLength={2} maxLength={4}/>);

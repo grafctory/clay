@@ -59,6 +59,8 @@ export function Select<V extends string>({
 	disabled,
 	required,
 
+	autocomplete,
+
 	options,
 
 	placeholder,
@@ -87,6 +89,16 @@ export function Select<V extends string>({
 	 * Whether the menu fails its constraints while showing the `placeholder`; optional if omitted.
 	 */
 	required?: boolean
+
+	/**
+	 * The purpose of the value, as one of the [autofill names][autofill] the platform defines, such as `country` or
+	 * `honorific-prefix`; none if omitted. The browser picks the option it keeps for that purpose, and assistive
+	 * technology states what the menu asks for. WCAG SC 1.3.5 requires one on any menu asking readers about
+	 * themselves, so that a reader is spared picking what the browser already knows.
+	 *
+	 * [autofill]: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill-field
+	 */
+	autocomplete?: string
 
 	/**
 	 * The label of each option, keyed by its value, in display order.
@@ -125,6 +137,8 @@ export function Select<V extends string>({
 		required={required}
 
 		aria-label={name}
+
+		autocomplete={autocomplete}
 
 		value={value ?? (placeholder === undefined ? undefined : "")}
 
