@@ -69,7 +69,10 @@
     inherits: true;
 }
 
-/* The block gutter of the head row, where two columns fit; narrower heads take the edge inset of the frame. */
+/*
+ * The block gutter of the head row, where two columns fit. Where they do not, the heads take the edge inset of the
+ * frame instead, while the heading opening the main body keeps this gutter above and below it.
+ */
 
 @property --clay-tool-head-gutter {
     syntax: "*";
@@ -392,6 +395,23 @@ clay-tool {
 
             }
 
+            /*
+             * The meta of the side head and the menu of the main head stand at the end of their head, apart from what
+             * leads it. They never shrink, so they clip nothing and the other items of the head give way to them. The
+             * button ending them reaches into the gutter, as at the end of any bar. They take the height of a single
+             * line of the head, and what they hold is centred on it, overhanging into the gutter above and below. A
+             * button shown or removed in them thus leaves the height of the head row unchanged, padding included.
+             */
+
+            & > :is(.meta, .menu) {
+                display: flex;
+                flex: none;
+                align-items: center;
+                block-size: 1lh;
+                margin-inline-start: auto;
+                overflow: visible;
+            }
+
         }
 
         /*
@@ -451,22 +471,6 @@ clay-tool {
 
         & > * {
             padding-inline: var(--clay-tool-side-inset);
-        }
-
-        /*
-         * The meta stands apart from what leads the head, the mark or the close button of the drawer, pushed to its
-         * end. Never shrinking, it clips nothing, while the mark gives way to it where the head runs short. It takes
-         * the height of a single line of the head, what it holds centred on it and overhanging into the gutter above
-         * and below, so buttons and their padding leave the height of the head row unchanged.
-         */
-
-        & > header > .meta {
-            display: flex;
-            flex: none;
-            align-items: center;
-            block-size: 1lh;
-            margin-inline-start: auto;
-            overflow: visible;
         }
 
         /*
@@ -625,26 +629,10 @@ clay-tool {
 
             }
 
-            /*
-             * The menu stands apart from the head, pushed to its end whatever the head holds. Never shrinking, it clips
-             * nothing, so the button ending it reaches into the gutter as at the end of any bar. While a turning glyph
-             * stands over it, the menu keeps its box hidden beneath, so the head neither shrinks nor shifts. It takes
-             * the height of a single line of the head, as the heading does, its buttons overhanging into the gutter.
-             */
+            /* A menu under the turning glyph keeps its box hidden beneath, so the head neither shrinks nor shifts. */
 
-            & > .menu {
-
-                display: flex;
-                flex: none;
-                align-items: center;
-                block-size: 1lh;
-                margin-inline-start: auto;
-                overflow: visible;
-
-                &:has(+ .busy) {
-                    visibility: hidden;
-                }
-
+            & > .menu:has(+ .busy) {
+                visibility: hidden;
             }
 
             /*
@@ -706,12 +694,14 @@ clay-tool {
             }
 
             /*
-             * A head opening the body, where two columns do not fit, keeps the type it takes in the head and stands
-             * above the block, which keeps the full height of the body: scrolling down takes the head out of view and
-             * leaves the block filling the body, as it does where the head stands in the main head.
+             * A head opening the body, where two columns do not fit, keeps the type and the gutter it takes in the head.
+             * The body block has no gutter of its own, so the head gutter keeps the head apart from the content, as in
+             * the main head. The head stands above the block, which keeps the full height of the body: scrolling down
+             * takes the head out of view and leaves the block filling the body, as in the main head.
              */
 
             & > header {
+                padding-block: var(--clay-tool-head-inset);
                 font-size: var(--clay-tool-head-font-size, var(--skin--font-size));
             }
 

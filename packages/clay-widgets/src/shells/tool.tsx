@@ -115,9 +115,10 @@ const Ignored = Object.fromEntries([
  * outside the drawer, or a link followed inside it closes the drawer and returns focus to the menu button.
  *
  * On such a viewport the heading of the screen also moves from the main head to the top of the main body, and scrolls
- * away with the content it names, while the mark moves from the side head to stand next to the menu button. The main
- * head keeps only the menu button, the mark and the menu, leaving the room to content. Both heads stand close to the
- * top of the window, with the same narrow spacing above and below them, whatever head gutter the shell is tuned to.
+ * away with the content it names, keeping the head gutter above and below it so it stands apart from that content as
+ * it does in the main head. The mark moves from the side head to stand next to the menu button. The main head keeps
+ * only the menu button, the mark and the menu, leaving the room to content. Both heads stand close to the top of the
+ * window, with the same narrow spacing above and below them, whatever head gutter the shell is tuned to.
  *
  * While the side column is locked on such a viewport, the menu button is left out and the mark leads the main head.
  * The heading of the screen keeps its place in the main head, as on a wider viewport, so the actions it holds, such
