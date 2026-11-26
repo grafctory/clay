@@ -91,6 +91,21 @@ describe("Image", () => {
 
 		});
 
+		it("holds the room left to the text where the width is bounded", async () => {
+
+			expect(rendered(<Image src={src} float="end" within="20rem"/>)?.hasAttribute("sized")).toBe(true);
+			expect(rendered(<Image src={src} float="end" within={["20rem", "none"]}/>)?.hasAttribute("sized")).toBe(true);
+
+		});
+
+		it("floats in any column where the width is unbounded", async () => {
+
+			expect(rendered(<Image src={src} float="end"/>)?.hasAttribute("sized")).toBe(false);
+			expect(rendered(<Image src={src} float="end" within="none"/>)?.hasAttribute("sized")).toBe(false);
+			expect(rendered(<Image src={src} float="end" within={["none", "12rem"]}/>)?.hasAttribute("sized")).toBe(false);
+
+		});
+
 	});
 
 	describe("within", () => {

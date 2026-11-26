@@ -85,18 +85,40 @@ clay-image {
      * Floated, the image is the one place it takes spacing of its own: the text wrapping around it keeps off the
      * picture on the side it faces and off its bottom edge, so a column of wrapped lines, ragged against the picture,
      * still reads as standing clear of it however its lines happen to break against it.
+     *
+     * The image is sized against the column rather than against the room the clearance leaves beside it, so a clearance
+     * taking the whole column moves the text below the picture without shrinking the picture to nothing.
      */
+
+    &[float] {
+        width: max-content;
+        max-width: min(100% - var(--skin--spacing-200), var(--clay-image-max-width));
+        margin-bottom: var(--skin--spacing-200);
+    }
 
     &[float="start"] {
         float: inline-start;
-        margin-inline-end: var(--skin--spacing-200);
-        margin-bottom: var(--skin--spacing-200);
+        margin-inline-end: var(--clay-image-clearance, var(--skin--spacing-200));
     }
 
     &[float="end"] {
         float: inline-end;
-        margin-inline-start: var(--skin--spacing-200);
-        margin-bottom: var(--skin--spacing-200);
+        margin-inline-start: var(--clay-image-clearance, var(--skin--spacing-200));
+    }
+
+    /*
+     * A floated image of bounded width leaves the text at least 20rem beside its bound, about forty characters, below
+     * which wrapped lines break into a word or two each; the design system names no text measure to read instead. Where
+     * the column is narrower, the clearance on the text side snaps to the whole column, leaving no room beside the
+     * picture, so the text resumes below it as it would under an image floating to no side.
+     */
+
+    &[sized] {
+        --clay-image-clearance: clamp(
+                var(--skin--spacing-200),
+                (var(--clay-image-max-width) + 20rem - 100%) * 1000, /* a step rather than a ramp */
+                100%
+        );
     }
 
     /*

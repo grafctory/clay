@@ -72,6 +72,10 @@ export function Image({
 	 *
 	 * The text that follows a floating image wraps around it and keeps clear of it by the design system spacing. An
 	 * image floating to no side stands in the column as a block of its own, with the text resuming below it.
+	 *
+	 * An image with a width bound set by `within` floats only where the column leaves the text at least `20rem` beside
+	 * it. In a narrower column it stands as a block, with the text resuming below, so the text is never squeezed to a
+	 * word or two per line. An image with no width bound floats in any column, however narrow.
 	 */
 	float?: "start" | "end"
 
@@ -82,6 +86,7 @@ export function Image({
 	 * or as a value CSS does not accept, takes no bound beyond the column, which limits the width but not the height.
 	 *
 	 * Percentages are relative to the column, and a percentage height has no effect because the column sets no height.
+	 * A width bound also lets a floating image stand as a block in a narrow column, as described under `float`.
 	 */
 	within?: string | readonly [width: string, height: string]
 
@@ -110,6 +115,8 @@ export function Image({
 
 			look,
 			float,
+
+			sized: within !== undefined && sides(within)[0] !== "none",
 			style: within === undefined ? undefined : bounds(within)
 
 		}, isContent(caption)
@@ -120,9 +127,13 @@ export function Image({
 	);
 
 
+	function sides(within: string | readonly [string, string]): readonly [width: string, height: string] {
+		return typeof within === "string" ? [within, within] : within;
+	}
+
 	function bounds(within: string | readonly [string, string]): Readonly<Record<string, string>> {
 
-		const [width, height] = typeof within === "string" ? [within, within] : within;
+		const [width, height] = sides(within);
 
 		return {
 			"--clay-image-max-width": width,

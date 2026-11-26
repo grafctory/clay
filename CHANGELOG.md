@@ -12,6 +12,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `@grafctory/clay-widgets/image` - a floating image with a bounded width stands as a block in a narrow column, with
+  the text resuming below it, so the text beside the picture is no longer squeezed to a word or two per line
 - `@grafctory/clay-widgets/tool` - the shell bodies no longer add tab stops without a visible focus: the main column
   hands the focus a navigation lands on it to the main body, so the keys scroll the content at once
 - `@grafctory/clay/router` - a `main` landmark taking the focus on a landing may pass it on to an element within itself,
