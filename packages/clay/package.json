@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/clay",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Preact contexts and hooks for @grafctory/clay.",
   "keywords": [
     "typescript",

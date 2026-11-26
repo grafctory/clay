@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/clay-widgets",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Preact interface components for @grafctory/clay.",
   "keywords": [
     "typescript",
@@ -317,7 +317,7 @@
     "@grafctory/skin": "^0.3.0"
   },
   "devDependencies": {
-    "@grafctory/clay": "^0.4.1",
+    "@grafctory/clay": "^0.5.0",
     "happy-dom": "^21.0.4",
     "lucide-preact": "^1.47.0",
     "preact": "^10.29.8",
@@ -326,7 +326,7 @@
     "vitest": "^5.0.5"
   },
   "peerDependencies": {
-    "@grafctory/clay": "^0.4.1",
+    "@grafctory/clay": "^0.5.0",
     "lucide-preact": "^1.47.0",
     "preact": "^10.27.2"
   }

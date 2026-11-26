@@ -1,6 +1,6 @@
 {
   "name": "@grafctory/clay-markdown",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Preact Markdown documents for @grafctory/clay.",
   "keywords": [
     "typescript",
@@ -52,7 +52,7 @@
     "check": "npx vitest --config ../../vitest.config.ts --root . --typecheck --passWithNoTests run"
   },
   "dependencies": {
-    "@grafctory/clay-widgets": "^0.4.1",
+    "@grafctory/clay-widgets": "^0.5.0",
     "@grafctory/core": "^0.14.0",
     "hast-util-heading-rank": "^3.0.0",
     "hast-util-to-jsx-runtime": "^2.3.7",

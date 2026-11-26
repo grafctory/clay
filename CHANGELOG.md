@@ -8,7 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 > [!NOTE]
 > Packages published under the `@grafctory` scope from version 0.4.1; earlier versions were published under `@metreeca`.
 
-## [Unreleased](https://github.com/grafctory/clay/compare/v0.4.1...HEAD)
+## [0.5.0](https://github.com/grafctory/clay/compare/v0.4.1...HEAD)
 
 ### Fixed
 
