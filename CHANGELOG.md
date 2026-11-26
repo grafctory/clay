@@ -10,7 +10,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.5.0](https://github.com/grafctory/clay/compare/v0.4.1...HEAD)
 
+### Added
+
+- `@grafctory/clay-widgets/card` - the `--clay-card-image-ratio` knob retunes the side column of a card given a number
+  of lines to the proportions of its pictures, landscape by default, so square or portrait pictures fill it as well
+
 ### Fixed
+
+- `@grafctory/clay-widgets/card` - a card given a number of lines and an image keeps the width of its side column while
+  the picture loads, so the description no longer reflows, and a run of cards ends every description at the same edge
 
 - `@grafctory/clay-widgets/image` - a floating image with a bounded width stands as a block in a narrow column, with
   the text resuming below it, so the text beside the picture is no longer squeezed to a word or two per line

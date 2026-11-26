@@ -46,6 +46,11 @@ import "./card.css";
  * A card given a number of lines cuts its description short with an ellipsis past them, and holds its image to the
  * same height. A run of cards then keeps its entries alike in height, with text and image ending together.
  *
+ * A card given a number of lines and an image fixes the width of its side column, whatever the proportions of the
+ * picture. The description keeps its width while the picture loads, and a run of cards ends every description at the
+ * same edge. The column is sized for a landscape picture up to the cap, and the `--clay-card-image-ratio` knob retunes
+ * it to other proportions. A picture that does not match is scaled down to fit the column, and is never cropped.
+ *
  * @param options The widget configuration
  *
  * @returns The card, or `null` if every part is empty
@@ -71,7 +76,8 @@ export function Card({
 
 	/**
 	 * The most lines the description shows before it is cut short with an ellipsis. The image is held to the same
-	 * height. If omitted, the description shows in full and the image keeps its own height.
+	 * height, in a side column of fixed width. If omitted, the description shows in full, and the image keeps its own
+	 * height in a side column as wide as the picture, so the edge the description ends at varies from card to card.
 	 */
 	lines?: number
 

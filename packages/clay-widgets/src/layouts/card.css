@@ -16,7 +16,8 @@
 
 /*
  * A card lays its parts out as a two-column grid: the title over the description in a main column, the badge over the
- * image in a side column kept to the end of the card, as wide as what it holds up to the cap set below.
+ * image in a side column kept to the end of the card, as wide as what it holds up to the cap set below. A card given
+ * a number of lines fixes the width of the side column beside an image instead, so a run of cards ends alike.
  */
 
 /*
@@ -29,6 +30,17 @@
     syntax: "*";
     inherits: true;
     initial-value: min(15rem, 33%);
+}
+
+/*
+ * The proportions of the side column beside an image in a card given a number of lines, as a width-to-height ratio
+ * over the height of the lines. Landscape by default, as the pictures standing for an item usually are.
+ */
+
+@property --clay-card-image-ratio {
+    syntax: "*";
+    inherits: true;
+    initial-value: 16 / 9;
 }
 
 clay-card {
@@ -159,6 +171,18 @@ clay-card {
                 var(--clay-card-lines) * 1lh - 2 * (var(--skin--spacing-100) + var(--skin--border-width))
             );
             align-self: stretch;
+        }
+
+        /*
+         * Beside an image, the side column takes a fixed width rather than the width of the picture. The description
+         * then keeps its width while the picture loads, and a run of cards ends every description at the same edge.
+         */
+
+        &:has(> i) {
+            grid-template-columns: 1fr min(
+                    var(--clay-card-side-max-width),
+                    var(--clay-card-lines) * 1lh * (var(--clay-card-image-ratio))
+            );
         }
 
     }
