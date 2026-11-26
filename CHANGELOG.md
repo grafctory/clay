@@ -25,13 +25,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - `@grafctory/clay-widgets/card` - a card given a number of lines and an image keeps the width of its side column while
   the picture loads, so the description no longer reflows, and a run of cards ends every description at the same edge
-
 - `@grafctory/clay-widgets/image` - a floating image with a bounded width stands as a block in a narrow column, with
   the text resuming below it, so the text beside the picture is no longer squeezed to a word or two per line
 - `@grafctory/clay-widgets/tool` - the shell bodies no longer add tab stops without a visible focus: the main column
   hands the focus a navigation lands on it to the main body, so the keys scroll the content at once
 - `@grafctory/clay-widgets/tool` - the heading opening the main body on a narrow viewport keeps the head gutter above
   and below it, so it no longer sits flush against the content it names
+- `@grafctory/clay-widgets/tool` - the content of a column body keeps its width as the body starts scrolling, so it no
+  longer reflows where the platform shows a classic scrollbar, as Windows does by default
 - `@grafctory/clay/router` - a `main` landmark taking the focus on a landing may pass it on to an element within itself,
   such as the box scrolling its content, without the router clearing it
 

@@ -76,9 +76,10 @@ const Ignored = Object.fromEntries([
  * Lays a screen out as two columns, the side column beside the main one, each with a head, a body and a foot. The
  * heads of the two columns share one row, so they always match in height, and the feet do the same. A column with
  * nothing for its foot shows none, its body running down to the bottom of the frame. The body of each column scrolls
- * on its own, while its head and foot stay in view, so what they hold is always within reach. Content made sticky in a
- * body pins flush against the head or foot of its column, leaving no strip of scrolled content showing between them,
- * while the body keeps its gutter around everything else, so only what is meant to stand pinned meets the bars.
+ * on its own, while its head and foot stay in view, so what they hold is always within reach. The content of a body
+ * keeps its width whether the body scrolls or not, so it never reflows where the platform shows a classic scrollbar.
+ * Content made sticky in a body pins flush against the head or foot of its column, with no strip of scrolled content
+ * showing between them. Everything else keeps the gutter of the body, so only pinned content meets the bars.
  *
  * Heads and feet lay what they hold out as a single row of flex items, centred vertically and never wrapping, so each
  * bar keeps the height of a single line. An item keeps its own width unless it states flex properties of its own, as
@@ -100,13 +101,13 @@ const Ignored = Object.fromEntries([
  * The main column is named after `head` and takes the focus as the {@link @grafctory/clay!router.Router router} lands a
  * screen, without adding a tab stop, so a reader hears which screen they are on rather than a control of the last one.
  * The column hands that focus on to the main body, so the keys scroll the content at once, while a control inside the
- * column keeps the focus it takes. The main body then opens at its top, or on the element a link targets, set below the head at the gutter of the
- * body, as it stands before any scrolling. The side body keeps its place, so a reader never loses their position in it.
- * A screen replacing its content without a landing, as a catalogue does on a change of filters, states it through the
- * `gist`, and the main body opens at its top again, so the reader never lands halfway down a list they have not read.
- * Under the Clay router, going back or forward through the browser history returns the main body to where the reader
- * left it. The router finds the body again by the fixed ids of the shell boxes, so a page shows a single shell at a
- * time, since a second shell on the same page would repeat those ids and leave the router unable to tell them apart.
+ * column keeps the focus it takes. The main body then opens at its top, or on the element a link targets, set below
+ * the head at the gutter of the body, as it stands before any scrolling. The side body keeps its place, so a reader
+ * never loses their position in it. A screen replacing its content without a landing, as a catalogue does on a change
+ * of filters, states it through the `gist`, and the main body opens at its top again, so the reader never lands halfway
+ * down a list they have not read. Under the Clay router, going back or forward in the browser history returns the main
+ * body to where the reader left it. The router finds the body again by the fixed ids of the shell boxes, so a page
+ * shows one shell at a time, since a second one would repeat those ids and leave the router unable to tell them apart.
  *
  * On a viewport too narrow for two columns, the main column takes the whole frame and the side column becomes a drawer
  * opened from a menu button leading the main head. The drawer covers the main column, across the whole width of a

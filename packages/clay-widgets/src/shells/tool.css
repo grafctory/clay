@@ -419,13 +419,15 @@ clay-tool {
          * carried by the boxes scrolling inside it, each column setting it on what its body holds. A column with no foot
          * runs its body down to the end of the frame, leaving no empty bar beside the foot of the other column. Content
          * scrolled into view, as the target of a link is, stops on the inset rather than flush with the head, so the
-         * first heading of the body lands where it stands before any scrolling.
+         * first heading of the body lands where it stands before any scrolling. The room for a classic scrollbar stays
+         * reserved, so the content of a body keeps its width and never reflows as the body starts scrolling.
          */
 
         & > div {
 
             grid-row: 2;
             overflow: auto;
+            scrollbar-gutter: stable;
             scroll-padding-block-start: var(--clay-tool-body-inset);
             scroll-timeline: var(--clay-tool-scroll) block;
 
