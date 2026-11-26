@@ -8,7 +8,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 > [!NOTE]
 > Packages published under the `@grafctory` scope from version 0.4.1; earlier versions were published under `@metreeca`.
 
-## [0.5.0](https://github.com/grafctory/clay/compare/v0.4.1...HEAD)
+## [Unreleased](https://github.com/grafctory/clay/compare/v0.5.0...HEAD)
+
+## [0.5.0](https://github.com/grafctory/clay/compare/v0.4.1...v0.5.0) - 2026-11-26
 
 ### Added
 
@@ -20,6 +22,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the browser picks the option it keeps for it and a menu asking readers about themselves meets WCAG SC 1.3.5
 - `@grafctory/clay-widgets/textarea` - the `autocomplete` prop declares the purpose of the value, such as a postal
   address, so the browser offers the data it keeps and a field asking readers about themselves meets WCAG SC 1.3.5
+
+### Changed
+
+- READMEs introduce the packages as part of the Grafctory framework, and bug reports by email go to `info@grafctory.dev`
 
 ### Fixed
 
